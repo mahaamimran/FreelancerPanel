@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import JobCard from "../components/JobCard";
+import Pagination from "../components/Pagination";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 2; // Number of jobs to display per page
 
   // Mock job data
   useEffect(() => {
@@ -29,12 +32,42 @@ const JobList = () => {
           experienceLevel: "Entry",
           status: "Open",
         },
+        {
+          title: "UI/UX Designer",
+          description: "Create designs for web and mobile applications.",
+          preferredLocation: "On-site",
+          budgetType: "Fixed",
+          budgetAmount: 4000,
+          hourlyRate: null,
+          experienceLevel: "Entry",
+          status: "Open",
+        },
+        {
+          title: "Backend Developer",
+          description: "Build server-side logic and manage database operations.",
+          preferredLocation: "Remote",
+          budgetType: "Hourly",
+          budgetAmount: null,
+          hourlyRate: 70,
+          experienceLevel: "Expert",
+          status: "Open",
+        },
       ];
       setJobs(mockJobs);
     };
 
     fetchJobs();
   }, []);
+
+  // Pagination Logic
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="font-sans">
@@ -115,10 +148,17 @@ const JobList = () => {
 
           {/* Job Cards */}
           <div className="space-y-4">
-            {jobs.map((job, index) => (
+            {currentJobs.map((job, index) => (
               <JobCard key={index} job={job} />
             ))}
           </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </section>
 
         {/* Sidebar */}
