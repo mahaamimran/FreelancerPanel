@@ -1,14 +1,19 @@
-// JobCard Component (JobCard.js)
-import React from 'react';
+import React from "react";
 
 const JobCard = ({ job }) => {
   return (
-    <div className="job-card">
-      <h3>{job.title}</h3>
-      <p>{job.company}</p>
-      <p>{job.location}</p>
-      <p>{job.salary}</p>
-      <button>View Details</button>
+    <div className="p-6 bg-white rounded-lg shadow">
+      <h3 className="text-lg font-semibold text-dark">{job.title}</h3>
+      <p className="text-sm text-gray-600 mt-1">
+        {job.preferredLocation
+          ? `${job.preferredLocation} · `
+          : "Remote · "}
+        {job.budgetType === "Fixed"
+          ? `$${job.budgetAmount}`
+          : `$${job.hourlyRate}/hr`}{" "}
+        · {job.experienceLevel} · {job.status}
+      </p>
+      <p className="text-sm text-gray-500 mt-2">{job.description}</p>
     </div>
   );
 };
