@@ -180,10 +180,27 @@ const updateJobProgress = async (req, res, next) => {
   }
 };
 
+const getJobById = async (req, res, next) => {
+  const { jobId } = req.params;
+
+  try {
+    const job = await Job.findById(jobId).populate("jobProviderId", "firstName lastName email");
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    res.json(job);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   listJobs,
   submitProposal,
   listActiveJobs,
   updateJobProgress,
   addJob,
+    getJobById,
 };

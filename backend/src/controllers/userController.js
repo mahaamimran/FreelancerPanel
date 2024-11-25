@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
 const Skill = require("../models/Skill");
+const Review = require("../models/Review");
 
 
 // @desc    Delete a User by ID

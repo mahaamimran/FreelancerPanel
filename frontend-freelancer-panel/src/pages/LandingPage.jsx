@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
-import Navbar from "../components/Navbar";
 
 const TrailDot = ({ x, y }) => {
   return (
@@ -49,7 +48,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="relative bg-gradient-to-br from-white via-primary/10 to-secondary/5 min-h-screen flex flex-col items-center justify-center text-dark overflow-hidden pt-10">
+    <div className="relative bg-gradient-to-b from-white via-primary/10 to-primary/50 min-h-screen flex flex-col items-center justify-center text-dark overflow-hidden pt-10">
       {/* Cursor Trail */}
       {trail.map((dot) => (
         <TrailDot key={dot.id} x={dot.x} y={dot.y} />

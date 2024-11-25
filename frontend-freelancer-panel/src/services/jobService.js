@@ -12,3 +12,15 @@ export const fetchJobs = async (filters = {}) => {
         throw error;
     }
 };
+export const fetchJobById = async (id) => {
+    try {
+      const response = await api.get(`/jobs/${id}`);
+      if (response.data) {
+        return response.data;
+      }
+      throw new Error("Job not found or API responded with failure");
+    } catch (error) {
+      console.error("Error in fetchJobById:", error.response || error.message);
+      throw error;
+    }
+  };

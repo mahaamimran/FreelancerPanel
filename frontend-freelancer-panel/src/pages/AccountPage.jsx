@@ -51,7 +51,12 @@ export default function AccountPage() {
   }
 
   if (!profile) {
-    return <p className="text-center text-gray-600">Loading profile...</p>;
+    return (
+      // centered loading spinner
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   return (
@@ -61,9 +66,11 @@ export default function AccountPage() {
         isFadedIn ? "opacity-100" : "opacity-0"
       )}
     >
-      <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-8">
+      <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-8 mt-12">
         {/* Name and Email */}
-        <h1 className="text-3xl font-bold text-secondary">{profile.name}</h1>
+        <h1 className="text-3xl font-bold text-secondary">
+          {profile.firstName} {profile.lastName}
+        </h1>
         <p className="text-dark text-lg">{profile.email}</p>
 
         {/* Role */}

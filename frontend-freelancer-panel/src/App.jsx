@@ -7,8 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import AccountPage from "./pages/AccountPage";
 import EditProfilePage from "./pages/EditProfilePage";
 import SignUpPage from "./pages/SignUpPage";
+import JobDetails from "./pages/JobDetails";
 import "./App.css";
-
 
 function App() {
   return (
@@ -22,6 +22,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/jobs/:id" element={<JobDetails />} /> 
           <Route
             path="*"
             element={
@@ -36,13 +37,11 @@ function App() {
   );
 }
 
-
 // Helper component to conditionally render Navbar
 const ConditionalNavbar = () => {
   const location = useLocation();
   const noNavbarRoutes = ["/login", "/signup"]; // Define paths where navbar should be hidden
 
-  // Check if current path is in noNavbarRoutes
   if (noNavbarRoutes.includes(location.pathname)) {
     return null; // Do not render Navbar
   }
