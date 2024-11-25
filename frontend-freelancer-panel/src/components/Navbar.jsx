@@ -25,7 +25,7 @@ export default function Navbar() {
     <>
       <header
         className={classNames(
-          "sticky top-0 z-50 w-full border-b bg-white transition-opacity duration-1000 ease-in-out",
+          "sticky top-0 z-50 w-full border-b transition-opacity duration-1000 ease-in-out backdrop-blur-md bg-white/70", // Translucent and glossy effect
           isFadedIn ? "opacity-100" : "opacity-0"
         )}
       >
@@ -112,7 +112,7 @@ export default function Navbar() {
           {/* Mobile Menu */}
           <nav
             className={classNames(
-              "absolute top-16 left-0 w-full bg-white shadow-md md:hidden transform transition-all duration-300",
+              "absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md shadow-md md:hidden transform transition-all duration-300",
               isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
             )}
           >
@@ -128,7 +128,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  to="/find-work"
+                  to="/jobs"
                   className="block text-sm font-medium text-gray-800 hover:text-primary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
