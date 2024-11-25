@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import Navbar from "../components/Navbar";
 
 const TrailDot = ({ x, y }) => {
   return (
     <motion.div
       className="absolute w-8 h-8 bg-primary/30 rounded-full pointer-events-none"
       style={{
-        top: y - 16, // Offset to center the dot
+        top: y - 80, // Offset to center the dot
         left: x - 16, // Offset to center the dot
         zIndex: 20, // Ensure trail dots are above the background
       }}

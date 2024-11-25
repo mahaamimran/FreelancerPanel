@@ -1,153 +1,188 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const generateToken = require('../utils/generateToken');
-const Skill = require('../models/Skill');
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const generateToken = require("../utils/generateToken");
+const Skill = require("../models/Skill");
+
+
+// @desc    Delete a User by ID
+// @route   DELETE /api/users/:id
+// @access  Private (Admin-only route, optional)
+const deleteUser = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      
+      // Check if the user exists
+      const userToDelete = await User.findById(userId);
+      
+      if (!userToDelete) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+  
+      res.status(200).json({ message: "User deleted successfully." });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private (Admin-only route, optional)
 const getAllUsers = async (req, res, next) => {
-    try {
-        const users = await User.find({}).select("-password"); // Exclude passwords for security
-        res.status(200).json({
-            success: true,
-            data: users,
-        });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const users = await User.find({})
+      .select("-password") // Exclude passwords for security
+      .populate("skills", "name"); // Populate skill names only
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
+
 // @desc    Register a new user
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role, bio, location } = req.body;
 
-    // Validate inputs
-    if (!name || !email || !password || !role) {
-        return res.status(400).json({ message: 'All fields are required' });
+  // Validate inputs
+  if (!firstName || !lastName || !email || !password || !role) {
+    return res.status(400).json({ message: "All required fields must be filled." });
+  }
+  if (!["freelancer", "client", "admin"].includes(role)) {
+    return res.status(400).json({ message: "Invalid role specified." });
+  }
+
+  try {
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists." });
     }
-    if (!['freelancer', 'client', 'admin'].includes(role)) {
-        return res.status(400).json({ message: 'Invalid role specified' });
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      role,
+      bio,
+      location,
+    });
+
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user.id),
+      });
+    } else {
+      throw new Error("Invalid user data.");
     }
-
-    try {
-        // Check if user already exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create user
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            role,
-        });
-
-        if (user) {
-            res.status(201).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                token: generateToken(user.id),
-            });
-        } else {
-            throw new Error('Invalid user data');
-        }
-    } catch (error) {
-        next(error); // Pass to error handler middleware
-    }
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Authenticate user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = async (req, res, next) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required." });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      res.json({
+        _id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user.id),
+      });
+    } else {
+      return res.status(401).json({ message: "Invalid email or password." });
     }
-
-    try {
-        const user = await User.findOne({ email });
-
-        if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                token: generateToken(user.id),
-            });
-        } else {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
-    } catch (error) {
-        next(error);
-    }
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.user.id)
-            .select('-password')
-            .populate('skills', 'name'); // Populate skill names only
+  try {
+    const user = await User.findById(req.user.id)
+      .select("-password")
+      .populate("skills", "name") // Populate skill names only
+      .populate("reviews", "rating comment");
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        next(error);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = async (req, res, next) => {
-    const { bio, skills, profilePicture } = req.body;
+  const { bio, skills, profilePicture, location } = req.body;
 
-    try {
-        const user = await User.findById(req.user.id);
+  try {
+    const user = await User.findById(req.user.id);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Validate skills if provided
-        if (skills && !Array.isArray(skills)) {
-            return res.status(400).json({ message: 'Skills must be an array of valid skill IDs' });
-        }
-
-        if (skills) {
-            const validSkills = await Skill.find({ _id: { $in: skills } });
-            if (validSkills.length !== skills.length) {
-                return res.status(400).json({ message: 'Some skill IDs are invalid' });
-            }
-            user.skills = skills;
-        }
-
-        // Update fields
-        user.bio = bio || user.bio;
-        user.profilePicture = profilePicture || user.profilePicture;
-        user.updatedAt = Date.now();
-
-        const updatedUser = await user.save();
-        res.json(updatedUser);
-    } catch (error) {
-        next(error);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
+
+    // Validate skills if provided
+    if (skills && !Array.isArray(skills)) {
+      return res.status(400).json({ message: "Skills must be an array of valid skill IDs." });
+    }
+
+    if (skills) {
+      const validSkills = await Skill.find({ _id: { $in: skills } });
+      if (validSkills.length !== skills.length) {
+        return res.status(400).json({ message: "Some skill IDs are invalid." });
+      }
+      user.skills = skills;
+    }
+
+    // Update fields
+    user.bio = bio || user.bio;
+    user.profilePicture = profilePicture || user.profilePicture;
+    user.location = location || user.location;
+    user.updatedAt = Date.now();
+
+    const updatedUser = await user.save();
+    res.json(updatedUser);
+  } catch (error) {
+    next(error);
+  }
 };
 
-module.exports = { registerUser, authUser, getUserProfile, updateUserProfile, getAllUsers };
+module.exports = { deleteUser, registerUser, authUser, getUserProfile, updateUserProfile, getAllUsers };

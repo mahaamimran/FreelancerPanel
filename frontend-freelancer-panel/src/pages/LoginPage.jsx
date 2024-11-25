@@ -58,10 +58,10 @@ export default function LoginPage() {
           )}
           <Button
             type="submit"
-            className="w-full bg-primary text-white hover:bg-primary-dark"
-          >
-            Log In
-          </Button>
+            content="Log In"
+            className="w-full bg-primary hover:bg-secondary"
+          />
+
         </form>
         <p className="mt-4 text-center">
           Don't have an account?{" "}

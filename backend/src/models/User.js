@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
     type: String,
     required: true,
   },
@@ -18,6 +22,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["freelancer", "client", "admin"],
     required: true,
+    default: "freelancer",
   },
   profilePicture: {
     type: String,
@@ -48,6 +53,10 @@ const userSchema = new mongoose.Schema({
     },
   ],
   totalEarnings: {
+    type: Number,
+    default: 0,
+  },
+  totalJobs: {
     type: Number,
     default: 0,
   },

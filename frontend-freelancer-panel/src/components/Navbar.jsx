@@ -61,7 +61,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <span className="text-sm font-medium text-gray-700">
-                  Welcome, {user.name}!
+                  Welcome, {user.firstName}!
                 </span>
                 <button
                   onClick={() => setIsModalOpen(true)} // Open the modal

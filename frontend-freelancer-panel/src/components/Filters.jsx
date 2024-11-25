@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { fetchSkills } from "../services/skillService";
-import { Button } from "./ui/Button";
 
 const Filters = ({ onFilterChange }) => {
   const [selectedFilters, setSelectedFilters] = useState({

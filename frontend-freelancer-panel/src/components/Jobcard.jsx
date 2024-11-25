@@ -12,6 +12,11 @@ const JobCard = ({ job }) => {
           : `$${job.hourlyRate}/hr`}{" "}
         · {job.experienceLevel} · {job.status}
       </p>
+      {job.estimatedTime && (
+        <p className="text-sm text-gray-600 mt-1">
+          Estimated Time: {job.estimatedTime}
+        </p>
+      )}
       <p className="text-sm text-gray-500 mt-2">{job.description}</p>
     </div>
   );

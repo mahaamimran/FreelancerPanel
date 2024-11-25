@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import JobList from "./pages/Joblist";
@@ -12,29 +12,18 @@ import "./App.css";
 function App() {
   return (
     <Router>
-      <AppContent />
+      <FadeInWrapper>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/jobs" element={<JobList />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="*" element={<h1 className="text-center mt-20 text-2xl font-bold">404 Not Found</h1>} />
+        </Routes>
+      </FadeInWrapper>
     </Router>
-  );
-}
-
-function AppContent() {
-  const location = useLocation();
-
-  return (
-    <FadeInWrapper>
-      {location.pathname !== "/" && <Navbar />}
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/jobs" element={<JobList />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/account" element={<AccountPage />} />
-        <Route path="/edit-profile" element={<EditProfilePage />} />
-        <Route
-          path="*"
-          element={<h1 className="text-center mt-20 text-2xl font-bold">404 Not Found</h1>}
-        />
-      </Routes>
-    </FadeInWrapper>
   );
 }
 
