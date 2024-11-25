@@ -1,22 +1,35 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const connectDB = require("./config/db");
+
+dotenv.config();
+connectDB();
 
 const app = express();
-dotenv.config();
 
-connectDB(); // Connect to database
+// Apply CORS middleware BEFORE defining routes
+app.use(cors());
 
-app.use(express.json()); // Body parser
+
+
+// Apply JSON body parser middleware
+app.use(express.json());
 
 // Routes
-const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
+const userRoutes = require("./routes/userRoutes");
+const skillRoutes = require("./routes/skillRoutes");
+const jobRoutes = require("./routes/jobRoutes");
 
+app.use("/api/users", userRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/jobs", jobRoutes);
 
-const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+// Middleware for error handling
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 app.use(notFound);
 app.use(errorHandler);
 
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

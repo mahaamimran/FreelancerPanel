@@ -1,8 +1,22 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const generateToken = require('../utils/generateToken');
-const Skill = require('../models/Skill'); // Import the Skill model
+const Skill = require('../models/Skill');
 
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private (Admin-only route, optional)
+const getAllUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({}).select("-password"); // Exclude passwords for security
+        res.status(200).json({
+            success: true,
+            data: users,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 // @desc    Register a new user
 // @route   POST /api/users/register
 // @access  Public
@@ -136,4 +150,4 @@ const updateUserProfile = async (req, res, next) => {
     }
 };
 
-module.exports = { registerUser, authUser, getUserProfile, updateUserProfile };
+module.exports = { registerUser, authUser, getUserProfile, updateUserProfile, getAllUsers };

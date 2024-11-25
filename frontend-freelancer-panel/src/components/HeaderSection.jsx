@@ -10,10 +10,17 @@ const HeaderSection = () => (
           Thousands of jobs in the computer, engineering, and technology sectors are waiting for you.
         </p>
   
-        {/* Search Bar */}
-        <SearchBar />
+        {/* Placeholder for Search Bar */}
+        <div className="mt-4">
+          <input
+            type="text"
+            placeholder="Search jobs..."
+            className="w-full max-w-lg px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
       </div>
     </header>
   );
+  
 
   export default HeaderSection;
