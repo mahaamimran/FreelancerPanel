@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { login } from "@/services/loginService";
 import AuthContext from "@/context/AuthContext";
 import googleLogo from "../assets/google-logo.svg";
+import logo from "../assets/logo-without-text.png"; 
 import DynamicText from "@/components/DynamicText";
 
 export default function LoginPage() {
@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col sm:flex-row min-h-screen">
       {/* Left Section - Login */}
-      <div className="relative flex-1 sm:flex-[2] w-full max-w-lg flex flex-col justify-center p-8 bg-gray-50">
+      <div className="flex-1 sm:flex-[3] w-full max-w-2xl flex flex-col justify-center p-8 sm:p-12 bg-gray-50 relative">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
@@ -47,11 +47,15 @@ export default function LoginPage() {
         >
           &larr; Back
         </button>
-        <h1 className="text-4xl font-bold text-dark mb-2">Welcome Back</h1>
-        <p className="text-sm text-gray-500 mb-6">
+        {/* Logo and Heading */}
+        <div className="flex items-center mb-6">
+          <img src={logo} alt="Logo" className="h-12 w-12" />
+          <h1 className="text-5xl font-bold text-primary">Welcome Back</h1>
+        </div>
+        <p className="text-lg text-gray-500 mb-6 ml-2">
           Log in to access your account
         </p>
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-6">
           <Input
             type="email"
             placeholder="Email Address"
@@ -70,14 +74,16 @@ export default function LoginPage() {
             <p className="mt-2 text-sm text-red-500">{errors.general}</p>
           )}
           {/* Log In Button */}
-          <Button
+          <button
             type="submit"
-            content="Log In"
-            className="w-full bg-primary hover:bg-secondary py-3 rounded-xl text-white text-lg font-semibold"
-          />
+            className="w-full bg-primary text-white text-lg font-semibold py-4 rounded-xl hover:bg-primary-dark focus:ring-4 focus:ring-primary-light transition"
+          >
+            Log In
+          </button>
           {/* Login with Google Button */}
           <button
-            className="w-full flex items-center justify-center px-4 py-3 bg-white text-dark border border-gray-300 hover:bg-gray-100 rounded-xl text-lg font-semibold"
+            type="button"
+            className="w-full flex items-center justify-center px-4 py-3 bg-white text-dark border border-gray-300 rounded-xl text-lg font-semibold hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 transition"
           >
             <img
               src={googleLogo}
@@ -87,7 +93,7 @@ export default function LoginPage() {
             Log in with Google
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?{" "}
           <a href="/signup" className="text-primary hover:underline">
             Sign Up
@@ -96,13 +102,15 @@ export default function LoginPage() {
       </div>
 
       {/* Right Section - Dynamic Typing Animation */}
-      <div className="flex-1 sm:flex-[1] bg-secondary flex flex-col justify-center items-center p-8">
+      <div className="hidden sm:flex flex-1 sm:flex-[2] bg-secondary flex-col justify-center items-center p-8">
         <DynamicText
           phrases={[
             "Empower Your Career.",
             "Explore New Horizons.",
             "Connect with Clients.",
             "Showcase Your Skills.",
+            "Find Your Dream Job.",
+            "Join SkillConnect Today.",
           ]}
         />
       </div>

@@ -43,3 +43,16 @@ export const fetchSkills = async () => {
     throw new Error(error.response?.data?.message || "Failed to fetch skills");
   }
 };
+
+
+export const registerUser = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/users/register`, {
+      ...formData,
+      role: "freelancer", // Ensure role is always set to "freelancer"
+    });
+    return response.data;
+  } catch (error) {
+    throw error; // Let the calling code handle the error
+  }
+};

@@ -6,7 +6,9 @@ import JobList from "./pages/Joblist";
 import LoginPage from "./pages/LoginPage";
 import AccountPage from "./pages/AccountPage";
 import EditProfilePage from "./pages/EditProfilePage";
+import SignUpPage from "./pages/SignUpPage";
 import "./App.css";
+
 
 function App() {
   return (
@@ -17,7 +19,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/jobs" element={<JobList />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route
@@ -33,6 +35,7 @@ function App() {
     </Router>
   );
 }
+
 
 // Helper component to conditionally render Navbar
 const ConditionalNavbar = () => {
