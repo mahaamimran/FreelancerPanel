@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { fetchSkills } from "../services/skillService";
 
 const Filters = ({ onFilterChange }) => {
   const [selectedFilters, setSelectedFilters] = useState({
-    location: "",
-    salary: "",
+    budgetType: "",
     experienceLevel: "",
+    category: "",
   });
+
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories from the backend
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const skills = await fetchSkills();
+        setCategories(skills); // Assuming API response is an array of skills
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    getCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,79 +35,81 @@ const Filters = ({ onFilterChange }) => {
     <div className="bg-gray-50 p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold text-dark">Filters</h2>
       <div className="mt-4 space-y-4">
-        {/* Location Filter */}
-        <h3 className="text-sm font-medium text-gray-600">Location</h3>
+        {/* Budget Type Filter */}
+        <h3 className="text-sm font-medium text-gray-600">Budget Type</h3>
         <div className="space-y-2">
           <label className="block">
             <input
               type="radio"
-              name="location"
-              value="remote"
+              name="budgetType"
+              value="Fixed"
               onChange={handleChange}
               className="mr-2"
             />
-            Remote job
+            Fixed
           </label>
           <label className="block">
             <input
               type="radio"
-              name="location"
-              value="onsite"
+              name="budgetType"
+              value="Hourly"
               onChange={handleChange}
               className="mr-2"
             />
-            On-site
+            Hourly
           </label>
         </div>
 
-        {/* Salary Filter */}
-        <h3 className="text-sm font-medium text-gray-600">Salary</h3>
-        <div className="space-y-2">
-          <label className="block">
-            <input
-              type="radio"
-              name="salary"
-              value="30000"
-              onChange={handleChange}
-              className="mr-2"
-            />
-            &gt; 30,000
-          </label>
-          <label className="block">
-            <input
-              type="radio"
-              name="salary"
-              value="50000"
-              onChange={handleChange}
-              className="mr-2"
-            />
-            &gt; 50,000
-          </label>
-        </div>
-
-        {/* Experience Filter */}
-        <h3 className="text-sm font-medium text-gray-600">Experience</h3>
+        {/* Experience Level Filter */}
+        <h3 className="text-sm font-medium text-gray-600">Experience Level</h3>
         <div className="space-y-2">
           <label className="block">
             <input
               type="radio"
               name="experienceLevel"
-              value="entry"
+              value="Entry"
               onChange={handleChange}
               className="mr-2"
             />
-            Entry Level
+            Entry
           </label>
           <label className="block">
             <input
               type="radio"
               name="experienceLevel"
-              value="intermediate"
+              value="Intermediate"
               onChange={handleChange}
               className="mr-2"
             />
             Intermediate
           </label>
+          <label className="block">
+            <input
+              type="radio"
+              name="experienceLevel"
+              value="Expert"
+              onChange={handleChange}
+              className="mr-2"
+            />
+            Expert
+          </label>
+        </div>
+
+        {/* Category Filter */}
+        <h3 className="text-sm font-medium text-gray-600">Category</h3>
+        <div className="space-y-2">
+          {categories.map((category) => (
+            <label className="block" key={category._id}>
+              <input
+                type="radio"
+                name="category"
+                value={category._id}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              {category.name}
+            </label>
+          ))}
         </div>
       </div>
     </div>

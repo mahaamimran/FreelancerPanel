@@ -3,30 +3,27 @@ import Filters from "../components/Filters";
 import JobCard from "../components/JobCard";
 import Pagination from "../components/Pagination";
 import HeaderSection from "../components/HeaderSection";
-import { fetchJobs } from "../services/api";
+import { fetchJobs } from "../services/jobService";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({}); // Store selected filters
-  const jobsPerPage = 5; // Number of jobs per page
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const jobsPerPage = 5;
 
   useEffect(() => {
     const getJobs = async () => {
       try {
-        const jobsData = await fetchJobs(filters);
-        console.log("Jobs Data:", jobsData);
+        const jobsData = await fetchJobs({ ...filters, status: "Open" }); // Always filter by Open jobs
         setJobs(jobsData);
       } catch (error) {
-        console.error("Error fetching jobs in useEffect:", error);
+        console.error("Error fetching jobs:", error);
         setJobs([]);
       }
     };
     getJobs();
   }, [filters]);
-  
-  
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -63,7 +60,7 @@ const JobList = () => {
           {jobs.length > 0 && (
             <Pagination
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={Math.ceil(jobs.length / jobsPerPage)}
               onPageChange={handlePageChange}
             />
           )}
@@ -71,7 +68,6 @@ const JobList = () => {
       </main>
     </div>
   );
-  
 };
 
 export default JobList;
