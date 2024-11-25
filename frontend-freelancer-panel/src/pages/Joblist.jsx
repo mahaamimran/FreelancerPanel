@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Filters from "../components/Filters";
 import JobContent from "../components/JobContent";
-import HeaderSection from "../components/HeaderSection";
 import { fetchJobs } from "../services/jobService";
+import SearchBar from "../components/SearchBar";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -35,9 +35,13 @@ const JobList = () => {
   };
 
   return (
-    <div className="font-sans">
-      <HeaderSection onSearch={handleSearch} />
-      <main className="container mx-auto mt-10 grid grid-cols-12 gap-8">
+    <div className="container mx-auto mt-10">
+      {/* Search Bar */}
+      <div className="mb-8">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+
+      <main className="grid grid-cols-12 gap-8">
         <aside className="col-span-3">
           <Filters onFilterChange={handleFilterChange} />
         </aside>

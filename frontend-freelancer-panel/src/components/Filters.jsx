@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchSkills } from "../services/skillService";
+import { Button } from "./ui/Button";
 
 const Filters = ({ onFilterChange }) => {
   const [selectedFilters, setSelectedFilters] = useState({
@@ -31,6 +32,16 @@ const Filters = ({ onFilterChange }) => {
     onFilterChange(updatedFilters);
   };
 
+  const handleClearFilters = () => {
+    const clearedFilters = {
+      budgetType: "",
+      experienceLevel: "",
+      category: "",
+    };
+    setSelectedFilters(clearedFilters);
+    onFilterChange(clearedFilters);
+  };
+
   return (
     <div className="bg-gray-50 p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold text-dark">Filters</h2>
@@ -43,6 +54,7 @@ const Filters = ({ onFilterChange }) => {
               type="radio"
               name="budgetType"
               value="Fixed"
+              checked={selectedFilters.budgetType === "Fixed"}
               onChange={handleChange}
               className="mr-2"
             />
@@ -53,6 +65,7 @@ const Filters = ({ onFilterChange }) => {
               type="radio"
               name="budgetType"
               value="Hourly"
+              checked={selectedFilters.budgetType === "Hourly"}
               onChange={handleChange}
               className="mr-2"
             />
@@ -68,6 +81,7 @@ const Filters = ({ onFilterChange }) => {
               type="radio"
               name="experienceLevel"
               value="Entry"
+              checked={selectedFilters.experienceLevel === "Entry"}
               onChange={handleChange}
               className="mr-2"
             />
@@ -78,6 +92,7 @@ const Filters = ({ onFilterChange }) => {
               type="radio"
               name="experienceLevel"
               value="Intermediate"
+              checked={selectedFilters.experienceLevel === "Intermediate"}
               onChange={handleChange}
               className="mr-2"
             />
@@ -88,6 +103,7 @@ const Filters = ({ onFilterChange }) => {
               type="radio"
               name="experienceLevel"
               value="Expert"
+              checked={selectedFilters.experienceLevel === "Expert"}
               onChange={handleChange}
               className="mr-2"
             />
@@ -104,6 +120,7 @@ const Filters = ({ onFilterChange }) => {
                 type="radio"
                 name="category"
                 value={category._id}
+                checked={selectedFilters.category === category._id}
                 onChange={handleChange}
                 className="mr-2"
               />
@@ -111,6 +128,16 @@ const Filters = ({ onFilterChange }) => {
             </label>
           ))}
         </div>
+      </div>
+
+      {/* Minimal Clear Filters Button */}
+      <div className="mt-6 text-right">
+        <button
+          onClick={handleClearFilters}
+          className="text-sm text-primary hover:underline"
+        >
+          Clear Filters
+        </button>
       </div>
     </div>
   );

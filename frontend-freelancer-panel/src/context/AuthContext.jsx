@@ -1,36 +1,32 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
-// Create the AuthContext
 const AuthContext = createContext();
 
-// AuthProvider Component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // User details
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status
+  const [user, setUser] = useState(null);
 
-  // Mock login function
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   const login = (userData) => {
     setUser(userData);
-    setIsLoggedIn(true);
-    localStorage.setItem("user", JSON.stringify(userData)); // Store user in localStorage
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // Mock logout function
   const logout = () => {
     setUser(null);
-    setIsLoggedIn(false);
-    localStorage.removeItem("user"); // Remove user from localStorage
+    localStorage.removeItem("user");
   };
 
-  // Value to provide to the context
-  const value = {
-    user,
-    isLoggedIn,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthContext;
