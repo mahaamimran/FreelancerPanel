@@ -6,19 +6,28 @@ const Job = require("../models/Job");
 const listJobs = async (req, res, next) => {
     try {
         const filters = {};
-        const { status, budgetType, experienceLevel, category } = req.query;
+        const { status, budgetType, experienceLevel, category, search } = req.query;
 
+        // Apply filters based on query parameters
         if (status) filters.status = status;
         if (budgetType) filters.budgetType = budgetType;
         if (experienceLevel) filters.experienceLevel = experienceLevel;
         if (category) filters.category = category;
+        if (search) {
+            filters.title = { $regex: search, $options: "i" }; // Case-insensitive search by title
+        }
 
+        // Fetch jobs from the database
         const jobs = await Job.find(filters).populate("category", "name");
-        res.status(200).json(jobs);
+        res.status(200).json({
+            success: true,
+            data: jobs,
+        });
     } catch (error) {
         next(error);
     }
 };
+
 
 const addJob = async (req, res, next) => {
     const {
