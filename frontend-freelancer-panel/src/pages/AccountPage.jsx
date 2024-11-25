@@ -66,7 +66,7 @@ export default function AccountPage() {
         isFadedIn ? "opacity-100" : "opacity-0"
       )}
     >
-      <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-8 mt-12">
+      <div className="flex flex-col items-center bg-gray-50 shadow-lg rounded-lg p-8 mt-12">
         {/* Name and Email */}
         <h1 className="text-3xl font-bold text-secondary">
           {profile.firstName} {profile.lastName}
@@ -95,7 +95,7 @@ export default function AccountPage() {
               {profile.skills.map((skill) => (
                 <li
                   key={skill._id || skill}
-                  className="text-sm text-dark bg-gray-100 px-4 py-2 rounded shadow"
+                  className="text-sm text-white bg-secondary/90 px-4 py-3 rounded shadow"
                 >
                   {skill.name || skill}
                 </li>
@@ -126,14 +126,14 @@ export default function AccountPage() {
         <div className="mt-8">
           <Button
             content="Edit Profile"
-            className="bg-secondary hover:bg-primary"
+            className="bg-primary hover:bg-primary"
             onClick={() => window.location.replace("/edit-profile")}
           />
         </div>
       </div>
 
       {/* Reviews Section */}
-      <div className="mt-12 bg-white shadow-lg rounded-lg p-8">
+      <div className="mt-12 bg-gray-50 shadow-lg rounded-lg p-8">
         <h2 className="text-xl font-semibold text-secondary border-b pb-4">
           Reviews
         </h2>
