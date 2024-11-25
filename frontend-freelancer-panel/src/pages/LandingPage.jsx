@@ -9,7 +9,7 @@ const TrailDot = ({ x, y }) => {
     <motion.div
       className="absolute w-8 h-8 bg-primary/30 rounded-full pointer-events-none"
       style={{
-        top: y - 80, // Offset to center the dot
+        top: y - 16, // Offset to center the dot
         left: x - 16, // Offset to center the dot
         zIndex: 20, // Ensure trail dots are above the background
       }}
@@ -62,7 +62,7 @@ const LandingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-6xl font-extrabold tracking-wide leading-tight text-secondary mb-6">
+          <h1 className="text-7xl font-extrabold tracking-wide leading-tight text-secondary mb-6">
             Welcome to{" "}
             <motion.span
               className="text-primary inline-block"

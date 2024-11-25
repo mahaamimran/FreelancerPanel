@@ -5,12 +5,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#3575E2",  // Name your color (e.g., 'primary')
-        secondary: "#0D2550", // Another reusable color
-        dark: "#20242C",      // Add your third hex code
+        primary: "#3575E2",
+        secondary: "#0D2550",
+        dark: "#20242C",
       },
       fontFamily: {
-        sans: ['Lexend', 'sans-serif'], // Set Lexend as the default sans-serif font
+        sans: ['Lexend', 'sans-serif'],
       },
     },
   },

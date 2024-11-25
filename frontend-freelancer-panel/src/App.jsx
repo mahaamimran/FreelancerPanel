@@ -6,14 +6,13 @@ import JobList from "./pages/Joblist";
 import LoginPage from "./pages/LoginPage";
 import AccountPage from "./pages/AccountPage";
 import EditProfilePage from "./pages/EditProfilePage";
-import FadeInWrapper from "./components/FadeinWrapper";
 import "./App.css";
 
 function App() {
   return (
     <Router>
-      <FadeInWrapper>
-        <Navbar />
+      <Navbar /> 
+      <div className="content-wrapper">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/jobs" element={<JobList />} />
@@ -22,7 +21,7 @@ function App() {
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="*" element={<h1 className="text-center mt-20 text-2xl font-bold">404 Not Found</h1>} />
         </Routes>
-      </FadeInWrapper>
+      </div>
     </Router>
   );
 }

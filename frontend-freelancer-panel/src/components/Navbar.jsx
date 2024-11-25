@@ -1,34 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
-import classNames from "classnames";
 import AuthContext from "../context/AuthContext";
-import Modal from "../components/Modal";
+import Modal from "../components/ui/Modal";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isFadedIn, setIsFadedIn] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsFadedIn(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogoutConfirm = () => {
     logout();
-    setIsModalOpen(false); // Close the modal after logout
+    setIsModalOpen(false);
   };
 
   return (
     <>
-      <header
-        className={classNames(
-          "sticky top-0 z-50 w-full border-b transition-opacity duration-1000 ease-in-out backdrop-blur-md bg-white/70", // Translucent and glossy effect
-          isFadedIn ? "opacity-100" : "opacity-0"
-        )}
-      >
+      {/* Navbar */}
+      <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
         <div className="container mx-auto flex items-center justify-between h-16 px-4 md:px-8">
           {/* Logo Section */}
           <div className="flex items-center">
@@ -38,14 +27,13 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-800">
+          <nav className="hidden md:flex space-x-6 text-sm font-medium text-black">
             <Link to="/find-talent" className="hover:text-primary">
               Find Talent
             </Link>
             <Link to="/jobs" className="hover:text-primary">
               Find Work
             </Link>
-
             <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
@@ -60,12 +48,12 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-black">
                   Welcome, {user.firstName}!
                 </span>
                 <button
-                  onClick={() => setIsModalOpen(true)} // Open the modal
-                  className="text-sm font-medium text-red-600 hover:underline"
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-sm font-medium text-red-400 hover:underline"
                 >
                   Logout
                 </button>
@@ -74,7 +62,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="text-sm font-medium text-gray-700 hover:text-primary"
+                  className="text-sm font-medium text-black hover:text-primary"
                 >
                   Log In
                 </Link>
@@ -90,7 +78,7 @@ export default function Navbar() {
 
           {/* Hamburger Menu (Mobile) */}
           <button
-            className="md:hidden flex items-center text-gray-700 focus:outline-none"
+            className="md:hidden flex items-center text-black focus:outline-none"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <svg
@@ -110,85 +98,82 @@ export default function Navbar() {
           </button>
 
           {/* Mobile Menu */}
-          <nav
-            className={classNames(
-              "absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md shadow-md md:hidden transform transition-all duration-300",
-              isMobileMenuOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
-            )}
-          >
-            <ul className="flex flex-col space-y-4 p-4">
-              <li>
-                <Link
-                  to="/find-talent"
-                  className="block text-sm font-medium text-gray-800 hover:text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Find Talent
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/jobs"
-                  className="block text-sm font-medium text-gray-800 hover:text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Find Work
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  className="block text-sm font-medium text-gray-800 hover:text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  About Us
-                </Link>
-              </li>
-              {user && (
+          {isMobileMenuOpen && (
+            <nav className="absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md shadow-md md:hidden">
+              <ul className="flex flex-col space-y-4 p-4">
                 <li>
                   <Link
-                    to="/account"
-                    className="block text-sm font-medium text-gray-800 hover:text-primary"
+                    to="/find-talent"
+                    className="block text-sm font-medium text-black hover:text-primary"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Account
+                    Find Talent
                   </Link>
                 </li>
-              )}
-              {!user && (
-                <>
-                  <li>
-                    <Link
-                      to="/login"
-                      className="block text-sm font-medium text-gray-800 hover:text-primary"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Log In
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/signup"
-                      className="block text-sm font-medium text-gray-800 hover:text-primary"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                  </li>
-                </>
-              )}
-              {user && (
                 <li>
-                  <button
-                    onClick={() => setIsModalOpen(true)} // Open the modal
-                    className="block text-sm font-medium text-red-600 hover:underline"
+                  <Link
+                    to="/jobs"
+                    className="block text-sm font-medium text-black hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Logout
-                  </button>
+                    Find Work
+                  </Link>
                 </li>
-              )}
-            </ul>
-          </nav>
+                <li>
+                  <Link
+                    to="/about"
+                    className="block text-sm font-medium text-black hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    About Us
+                  </Link>
+                </li>
+                {user && (
+                  <li>
+                    <Link
+                      to="/account"
+                      className="block text-sm font-medium text-black hover:text-primary"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Account
+                    </Link>
+                  </li>
+                )}
+                {!user && (
+                  <>
+                    <li>
+                      <Link
+                        to="/login"
+                        className="block text-sm font-medium text-black hover:text-primary"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Log In
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/signup"
+                        className="block text-sm font-medium text-black hover:text-primary"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Sign Up
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user && (
+                  <li>
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="block text-sm font-medium text-red-600 hover:underline"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          )}
         </div>
       </header>
 
@@ -197,8 +182,8 @@ export default function Navbar() {
         isOpen={isModalOpen}
         title="Logout Confirmation"
         message="Are you sure you want to log out?"
-        onClose={() => setIsModalOpen(false)} // Close the modal
-        onConfirm={handleLogoutConfirm} // Confirm logout
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleLogoutConfirm}
       />
     </>
   );
