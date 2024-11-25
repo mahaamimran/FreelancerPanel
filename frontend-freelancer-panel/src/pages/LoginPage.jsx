@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { login } from "@/services/loginService";
 import AuthContext from "@/context/AuthContext";
-import graphic from "../assets/graphic.svg"; // Import your asset
+import googleLogo from "../assets/google-logo.svg";
+import DynamicText from "@/components/DynamicText";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -36,9 +37,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col sm:flex-row min-h-screen">
       {/* Left Section - Login */}
-      <div className="w-full max-w-lg flex flex-col justify-center p-8 bg-gray-50">
+      <div className="relative flex-1 sm:flex-[2] w-full max-w-lg flex flex-col justify-center p-8 bg-gray-50">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 text-primary hover:underline text-sm font-semibold"
+        >
+          &larr; Back
+        </button>
         <h1 className="text-4xl font-bold text-dark mb-2">Welcome Back</h1>
         <p className="text-sm text-gray-500 mb-6">
           Log in to access your account
@@ -61,18 +69,23 @@ export default function LoginPage() {
           {errors.general && (
             <p className="mt-2 text-sm text-red-500">{errors.general}</p>
           )}
+          {/* Log In Button */}
           <Button
             type="submit"
             content="Log In"
-            className="w-full bg-primary hover:bg-secondary"
+            className="w-full bg-primary hover:bg-secondary py-3 rounded-xl text-white text-lg font-semibold"
           />
-          {/* Login with Google */}
-          <div className="mt-4">
-            <Button
-              content="Log in with Google"
-              className="w-full bg-white text-dark border border-gray-300 hover:bg-gray-100"
+          {/* Login with Google Button */}
+          <button
+            className="w-full flex items-center justify-center px-4 py-3 bg-white text-dark border border-gray-300 hover:bg-gray-100 rounded-xl text-lg font-semibold"
+          >
+            <img
+              src={googleLogo}
+              alt="Google"
+              className="h-5 w-5 mr-2"
             />
-          </div>
+            Log in with Google
+          </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-500">
           Don't have an account?{" "}
@@ -82,9 +95,16 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Right Section - Graphic */}
-      <div className="flex-1 bg-secondary flex items-center justify-center">
-        <img src={graphic} alt="Graphic" className="max-w-full h-auto" />
+      {/* Right Section - Dynamic Typing Animation */}
+      <div className="flex-1 sm:flex-[1] bg-secondary flex flex-col justify-center items-center p-8">
+        <DynamicText
+          phrases={[
+            "Empower Your Career.",
+            "Explore New Horizons.",
+            "Connect with Clients.",
+            "Showcase Your Skills.",
+          ]}
+        />
       </div>
     </div>
   );
