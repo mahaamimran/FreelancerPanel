@@ -9,5 +9,7 @@ router.get("/:jobId", jobController.getJobById);
 router.post("/:jobId/proposals", jobController.submitProposal);
 router.get("/active", jobController.listActiveJobs);
 router.put("/:jobId", jobController.updateJobProgress);
+router.put("/:jobId/update", jobController.updateJob); // Update job details
+router.delete("/:jobId", jobController.deleteJob); // Delete a job
 
 module.exports = router;

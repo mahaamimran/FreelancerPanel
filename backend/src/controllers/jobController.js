@@ -184,17 +184,71 @@ const getJobById = async (req, res, next) => {
   const { jobId } = req.params;
 
   try {
-    const job = await Job.findById(jobId).populate("jobProviderId", "firstName lastName email");
+    // Fetch the job and populate job provider details
+    const job = await Job.findById(jobId).populate("jobProviderId", "firstName lastName email bio avgRating reviews");
 
     if (!job) {
       return res.status(404).json({ message: "Job not found." });
     }
 
-    res.json(job);
+    res.status(200).json({
+      success: true,
+      data: job,
+    });
   } catch (error) {
     next(error);
   }
 };
+
+
+// @desc    Update job details
+// @route   PUT /api/jobs/:jobId/update
+// @access  Private
+const updateJob = async (req, res, next) => {
+  const { jobId } = req.params;
+
+  try {
+    const updatedJob = await Job.findByIdAndUpdate(jobId, req.body, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied
+    });
+
+    if (!updatedJob) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job updated successfully.",
+      data: updatedJob,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a job
+// @route   DELETE /api/jobs/:jobId
+// @access  Private
+const deleteJob = async (req, res, next) => {
+  const { jobId } = req.params;
+
+  try {
+    const deletedJob = await Job.findByIdAndDelete(jobId);
+
+    if (!deletedJob) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job deleted successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 module.exports = {
   listJobs,
@@ -202,5 +256,7 @@ module.exports = {
   listActiveJobs,
   updateJobProgress,
   addJob,
-    getJobById,
+  getJobById,
+  updateJob,
+  deleteJob
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 import Button from "../components/ui/Button";
 
 const TrailDot = ({ x, y }) => {
@@ -36,7 +37,7 @@ const LandingPage = () => {
     const handleMouseMove = (e) => {
       setTrail((prevTrail) => [
         ...prevTrail.slice(-12), // Keep only the last 12 dots
-        { x: e.clientX, y: e.clientY, id: Date.now() }, // New dot position
+        { x: e.clientX, y: e.clientY, id: uuidv4() }, // Generate a UUID for the dot
       ]);
     };
 
