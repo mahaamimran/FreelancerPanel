@@ -3,6 +3,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch user profile
+
 export const fetchUserProfile = async (token) => {
   try {
     const response = await axios.get(`${BASE_URL}/users/profile`, {
@@ -10,7 +11,7 @@ export const fetchUserProfile = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    return response.data; 
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to fetch profile");
   }
@@ -54,5 +55,19 @@ export const registerUser = async (formData) => {
     return response.data;
   } catch (error) {
     throw error; // Let the calling code handle the error
+  }
+};
+// Fetch user skills by user ID
+export const fetchUserSkills = async (userId, token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/users/skills/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.skills;
+  } catch (error) {
+    console.error("Error fetching user skills:", error.response || error.message);
+    throw new Error(error.response?.data?.message || "Failed to fetch user skills.");
   }
 };

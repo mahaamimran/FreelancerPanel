@@ -10,5 +10,6 @@ router.post('/register', userController.registerUser);
 router.post('/login', userController.authUser);
 router.get('/profile', protect, userController.getUserProfile);
 router.put('/profile', protect, userController.updateUserProfile);
+router.get("/skills/:userId", protect, userController.getUserSkills);
 
 module.exports = router;

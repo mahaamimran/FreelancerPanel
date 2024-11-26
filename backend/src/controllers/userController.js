@@ -186,4 +186,32 @@ const updateUserProfile = async (req, res, next) => {
   }
 };
 
-module.exports = { deleteUser, registerUser, authUser, getUserProfile, updateUserProfile, getAllUsers };
+// @desc    Get skills for a specific user by ID
+// @route   GET /api/users/skills/:userId
+// @access  Private
+const getUserSkills = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate("skills", "name");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const skills = user.skills.map((skill) => ({
+      _id: skill._id,
+      name: skill.name,
+    }));
+
+    res.status(200).json({
+      success: true,
+      skills,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+module.exports = {getUserSkills, deleteUser, registerUser, authUser, getUserProfile, updateUserProfile, getAllUsers };
