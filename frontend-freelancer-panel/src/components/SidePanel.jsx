@@ -8,7 +8,7 @@ export const LoggedInPanel = ({ matchPercentage }) => {
       <h3 className="text-lg font-semibold text-gray-700 mb-4">Profile Match</h3>
       <div className="relative w-full bg-gray-200 rounded-full h-6 mb-4">
         <div
-          className="bg-primary h-6 rounded-full"
+          className="bg-primary/60 h-6 rounded-full"
           style={{ width: `${matchPercentage}%` }}
         ></div>
         <span className="absolute inset-0 flex items-center justify-center text-sm font-medium text-gray-800">

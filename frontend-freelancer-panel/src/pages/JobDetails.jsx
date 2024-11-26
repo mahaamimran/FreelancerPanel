@@ -2,11 +2,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchJobById } from "../services/jobService";
 import { fetchUserProfile } from "../services/userService";
+import { fetchSkills } from "../services/skillService"; // New import
 import AuthContext from "../context/AuthContext";
 import JobInfo from "../components/JobInfo";
 import AboutJobProvider from "../components/AboutJobProvider";
 import { LoggedInPanel, NonLoggedInPanel } from "../components/SidePanel";
 import Button from "../components/ui/Button";
+import { Spinner } from "../components/ui/Spinner";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -18,7 +20,8 @@ const JobDetails = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [skillsMap, setSkillsMap] = useState({});
+  const [globalSkillsMap, setGlobalSkillsMap] = useState({}); // Global skills mapping
+  const [jobRequiredSkills, setJobRequiredSkills] = useState({});
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -39,16 +42,22 @@ const JobDetails = () => {
           console.log("[Debug] Token is missing.");
         }
 
-        // Combine job's required skills and user's skills into a single map
-        const skillsMapping = jobData.requiredSkills.reduce((acc, skillId) => {
-          const matchedSkill =
-            userProfile?.skills?.find((skill) => skill._id === skillId) || null;
-          acc[skillId] = matchedSkill ? matchedSkill.name : null;
+        console.log("[Debug] Fetching global skills...");
+        const globalSkills = await fetchSkills(); // Fetch global skill mappings
+        const globalSkillsMapping = globalSkills.reduce((acc, skill) => {
+          acc[skill._id] = skill.name;
           return acc;
         }, {});
-        console.log("[Debug] Skills Map:", skillsMapping);
+        setGlobalSkillsMap(globalSkillsMapping);
 
-        setSkillsMap(skillsMapping);
+        // Map job-required skills using global skill mapping
+        const jobSkillsMapping = jobData.requiredSkills.reduce((acc, skillId) => {
+          acc[skillId] = globalSkillsMapping[skillId] || "Unknown Skill";
+          return acc;
+        }, {});
+        console.log("[Debug] Job Required Skills Map:", jobSkillsMapping);
+
+        setJobRequiredSkills(jobSkillsMapping);
         setIsLoading(false);
       } catch (err) {
         console.error("[Error] Failed to fetch details:", err);
@@ -74,11 +83,7 @@ const JobDetails = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error) {
@@ -94,7 +99,7 @@ const JobDetails = () => {
           createdAt={job.createdAt}
           description={job.description}
           requiredSkills={job.requiredSkills}
-          skills={skillsMap}
+          skills={jobRequiredSkills} 
           location={job.preferredLocation}
           budgetType={job.budgetType}
           budgetAmount={job.budgetAmount}
