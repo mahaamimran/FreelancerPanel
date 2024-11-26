@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // Panel for logged-in users
 export const LoggedInPanel = ({ matchPercentage }) => {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-lg">
+    <div className="bg-white rounded-lg p-6 shadow-lg w-full">
       <h3 className="text-lg font-semibold text-gray-700 mb-4">Profile Match</h3>
       <div className="relative w-full bg-gray-200 rounded-full h-6 mb-4">
         <div
@@ -27,7 +27,7 @@ export const NonLoggedInPanel = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-gray-200 rounded-lg p-6 shadow-lg text-center">
+    <div className="bg-gray-200 rounded-lg p-6 shadow-lg text-center w-full">
       <h3 className="text-lg font-semibold text-gray-700">Sign up or Log in to Apply!</h3>
       <p className="text-gray-600 mt-2">
         Create an account to check how well your profile matches this job and

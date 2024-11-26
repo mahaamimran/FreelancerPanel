@@ -83,23 +83,22 @@ const JobDetails = () => {
           budgetType={job.budgetType}
           budgetAmount={job.budgetAmount}
         />
-        <AboutJobProvider provider={job.jobProviderId} />
       </div>
 
       {/* Right Panel */}
-      <div className="w-full lg:w-1/3 bg-white shadow-md rounded-lg p-6 mt-10">
+      <div className="w-full lg:w-1/3 flex flex-col gap-y-6 items-start bg-white shadow-md rounded-lg p-6 mt-10">
+        <AboutJobProvider provider={job.jobProviderId} />
         {profile ? (
           <>
             <LoggedInPanel matchPercentage={calculateSkillMatch(job, profile)} />
             <Button
               content="Apply Now"
               onClick={() => alert("Application Submitted!")}
-              className="w-full text-2xl py-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300 ease-in-out transform scale-105 hover:scale-100 shadow-md hover:shadow-lg mt-4"
+              className="w-full text-2xl py-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300 ease-in-out transform scale-105 hover:scale-100 shadow-md hover:shadow-lg"
               style={{
                 transition: "box-shadow 0.3s ease-in-out",
               }}
             />
-
           </>
         ) : (
           <NonLoggedInPanel />
