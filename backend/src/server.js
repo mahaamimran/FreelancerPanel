@@ -20,10 +20,12 @@ app.use(express.json());
 const userRoutes = require("./routes/userRoutes");
 const skillRoutes = require("./routes/skillRoutes");
 const jobRoutes = require("./routes/jobRoutes");
+const proposalRoutes = require("./routes/proposalRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/proposals", proposalRoutes);
 
 // Middleware for error handling
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");

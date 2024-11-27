@@ -93,7 +93,7 @@ const JobDetails = () => {
             <LoggedInPanel matchPercentage={calculateSkillMatch(job, profile)} />
             <Button
               content="Apply Now"
-              onClick={() => alert("Application Submitted!")}
+              onClick={() => window.location.replace(`/jobs/${id}/submit-proposal`)}
               className="w-full text-2xl py-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300 ease-in-out transform scale-105 hover:scale-100 shadow-md hover:shadow-lg"
               style={{
                 transition: "box-shadow 0.3s ease-in-out",

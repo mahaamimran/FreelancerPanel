@@ -36,7 +36,7 @@ const LandingPage = () => {
   useEffect(() => {
     const handleMouseMove = (e) => {
       setTrail((prevTrail) => [
-        ...prevTrail.slice(-12), // Keep only the last 12 dots
+        ...prevTrail.slice(-15), // Keep only the last 12 dots
         { x: e.clientX, y: e.clientY, id: uuidv4() }, // Generate a UUID for the dot
       ]);
     };

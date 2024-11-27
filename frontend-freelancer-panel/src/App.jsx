@@ -8,6 +8,7 @@ import AccountPage from "./pages/AccountPage";
 import EditProfilePage from "./pages/EditProfilePage";
 import SignUpPage from "./pages/SignUpPage";
 import JobDetails from "./pages/JobDetails";
+import SubmitProposalPage from "./pages/SubmitProposalPage";
 import "./App.css";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/jobs/:id" element={<JobDetails />} /> 
+          <Route path="/jobs/:id/submit-proposal" element={<SubmitProposalPage />} />
           <Route
             path="*"
             element={
