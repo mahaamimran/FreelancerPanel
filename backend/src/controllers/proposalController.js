@@ -155,15 +155,16 @@ const deleteProposal = async (req, res) => {
 const getProposalForJobByUser = async (req, res, next) => {
   try {
     const { jobId } = req.params;
-    const proposal = await Proposal.findOne({ jobId, freelancerId: req.user._id });
+    const freelancerId = req.user._id; // Assume `req.user` contains the authenticated user
 
+    const proposal = await Proposal.findOne({ jobId, freelancerId });
     if (!proposal) {
       return res.status(404).json({ message: "No proposal found for this job." });
     }
 
     res.status(200).json(proposal);
   } catch (error) {
-    console.error("Error fetching proposal:", error);
+    console.error("Error fetching user proposal:", error);
     next(error);
   }
 };

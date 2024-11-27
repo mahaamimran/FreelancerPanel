@@ -30,14 +30,15 @@ export const submitProposal = async (proposalData, token) => {
       };
   
       console.log("Fetching proposal for job ID:", jobId);
-      const response = await axios.get(`${API_URL}/${jobId}/me`, config);
-      console.log("Fetched user proposal successfully:", response.data);
-  
+      const response = await axios.get(`${API_URL}/${jobId}/me`, config); // API endpoint
       return response.data;
     } catch (error) {
+      if (error.response?.status === 404) {
+        console.log("No proposal found for this job.");
+        return null; // Explicitly return null for no proposal
+      }
       console.error("Error fetching user proposal:", error.response?.data || error.message);
-      throw error;
+      throw error; // Propagate other errors
     }
   };
-  
   
