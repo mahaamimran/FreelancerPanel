@@ -7,6 +7,7 @@ import ProposalForm from "../components/ProposalForm";
 import TipsToStandOut from "../components/TipsToStandOut";
 import { motion } from "framer-motion";
 import { Spinner } from "../components/ui/Spinner";
+import Modal from "../components/ui/Modal";
 
 const UpdateProposalPage = () => {
   const { jobId } = useParams();
@@ -18,6 +19,7 @@ const UpdateProposalPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -55,15 +57,24 @@ const UpdateProposalPage = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const confirmDelete = async () => {
     try {
       await deleteProposal(proposal._id, jobId, user.token);
       setSuccessMessage("Proposal deleted successfully!");
+      setIsModalOpen(false); // Close modal
       setTimeout(() => {
         navigate(`/jobs/${jobId}`);
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to delete proposal.");
+      if (err.response?.status === 404) {
+        setError("Proposal not found. It may have already been deleted.");
+      } else {
+        setError(err.response?.data?.message || "Failed to delete proposal.");
+      }
+      setIsModalOpen(false); // Close modal
     }
   };
 
@@ -72,6 +83,13 @@ const UpdateProposalPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Modal
+        isOpen={isModalOpen}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this proposal? This action cannot be undone."
+        onClose={closeModal}
+        onConfirm={confirmDelete}
+      />
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,7 +122,7 @@ const UpdateProposalPage = () => {
           <ProposalForm
             initialValues={proposal}
             onSubmit={handleUpdate}
-            onDelete={handleDelete}
+            onDelete={openModal} // Trigger modal on delete
             isEditing={true}
           />
         </motion.div>

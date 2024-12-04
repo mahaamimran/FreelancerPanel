@@ -54,9 +54,21 @@ export const submitProposal = async (proposalData, token) => {
     return response.data;
   };
   
-  export const deleteProposal = async (jobId, proposalId, token) => {
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.delete(`${API_URL}/${jobId}/${proposalId}`, config);
-    return response.data;
+  export const deleteProposal = async (proposalId, jobId, token) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+  
+      console.log("Attempting to delete Proposal ID:", proposalId, "from Job ID:", jobId);
+      const response = await axios.delete(`${API_URL}/${jobId}/${proposalId}`, config);
+      console.log("Proposal deleted successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting proposal:", error.response?.data || error.message);
+      throw error;
+    }
   };
   

@@ -145,21 +145,21 @@ const deleteProposal = async (req, res, next) => {
     console.log("Deleting proposal with ID:", proposalId);
     console.log("From job with ID:", jobId);
 
-    // Find the proposal
+    // Check if the proposal exists
     const proposal = await Proposal.findById(proposalId);
     if (!proposal) {
-      return res.status(404).json({ message: "Proposal not found." });
+      return res.status(404).json({ message: "Proposal not found. It may have been deleted already." });
     }
 
-    // Ensure only the owner can delete the proposal
+    // Ensure the user owns the proposal
     if (proposal.freelancerId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "You are not authorized to delete this proposal." });
     }
 
-    // Remove the proposal
+    // Delete the proposal
     await proposal.deleteOne();
 
-    // Update the job to decrement the proposals count
+    // Update the related job
     const job = await Job.findById(jobId);
     if (job) {
       job.proposalsCount = Math.max(0, job.proposalsCount - 1);
@@ -169,12 +169,13 @@ const deleteProposal = async (req, res, next) => {
       await job.save();
     }
 
-    res.status(200).json({ message: "Proposal deleted successfully." });
+    return res.status(200).json({ message: "Proposal deleted successfully." });
   } catch (error) {
     console.error("Error deleting proposal:", error);
     next(error);
   }
 };
+
 
 
 // @desc Get the current user's proposal for a specific job
