@@ -1,3 +1,4 @@
+// src/components/JobInfo.jsx
 import React from "react";
 import { MdLocationOn, MdAccessTime, MdAttachMoney } from "react-icons/md";
 
@@ -6,7 +7,7 @@ const JobInfo = ({
   createdAt,
   description,
   requiredSkills = [],
-  skills = {},
+  skillsMap = {}, // Add skillsMap as a prop
   location,
   budgetType,
   budgetAmount,
@@ -63,7 +64,7 @@ const JobInfo = ({
                 key={index}
                 className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium"
               >
-                {skills[skillId] || "Unknown Skill"}
+                {skillsMap[skillId] || "Unknown Skill"} {/* Map skill IDs to names */}
               </span>
             ))}
           </div>

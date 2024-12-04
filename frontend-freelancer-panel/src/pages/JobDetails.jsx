@@ -1,7 +1,9 @@
+// src/pages/JobDetails.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchJobById } from "../services/jobService";
-import { fetchUserProposal } from "../services/proposalService"; // Use this service to check if a proposal exists
+import { fetchSkills } from "../services/skillService"; // Fetch skills here
+import { fetchUserProposal } from "../services/proposalService";
 import AuthContext from "../context/AuthContext";
 import JobInfo from "../components/JobInfo";
 import AboutJobProvider from "../components/AboutJobProvider";
@@ -14,11 +16,12 @@ const JobDetails = () => {
   const { token: contextToken } = useContext(AuthContext);
   const token = contextToken || JSON.parse(localStorage.getItem("user"))?.token;
 
-  const [job, setJob] = useState(null); // Job details
-  const [hasApplied, setHasApplied] = useState(false); // Tracks if the user has applied
-  const [profile, setProfile] = useState(null); // User profile
-  const [error, setError] = useState(null); // Error state
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [job, setJob] = useState(null);
+  const [skillsMap, setSkillsMap] = useState({});
+  const [hasApplied, setHasApplied] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -27,24 +30,32 @@ const JobDetails = () => {
         const jobData = await fetchJobById(jobId);
         setJob(jobData);
 
+        // Fetch all skills and create a mapping
+        const skills = await fetchSkills();
+        const mapping = {};
+        skills.forEach((skill) => {
+          mapping[skill._id] = skill.name;
+        });
+        setSkillsMap(mapping);
+
         // Check if the user has submitted a proposal for this job
         if (token) {
           try {
             const userProposal = await fetchUserProposal(jobId, token);
-            setHasApplied(!!userProposal); // Set `hasApplied` to true if a proposal exists
+            setHasApplied(!!userProposal);
           } catch (err) {
             if (err.response?.status === 404) {
-              setHasApplied(false); // No proposal found
+              setHasApplied(false);
             } else {
-              throw err; // Handle other errors
+              throw err;
             }
           }
         }
 
         setIsLoading(false);
       } catch (err) {
-        console.error("Error fetching job details or proposal:", err);
-        setError("Failed to load job details or proposal.");
+        console.error("Error fetching job details or skills:", err);
+        setError("Failed to load job details or skills.");
         setIsLoading(false);
       }
     };
@@ -56,7 +67,6 @@ const JobDetails = () => {
   if (isLoading) return <Spinner />;
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
-  // Render the job details page
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row gap-8 px-6 lg:px-12 mt-16">
       {/* Left Section */}
@@ -66,6 +76,7 @@ const JobDetails = () => {
           createdAt={job.createdAt}
           description={job.description}
           requiredSkills={job.requiredSkills}
+          skillsMap={skillsMap} // Pass the skills mapping here
           location={job.preferredLocation}
           budgetType={job.budgetType}
           budgetAmount={job.budgetAmount}
@@ -81,14 +92,14 @@ const JobDetails = () => {
             <LoggedInPanel matchPercentage={profile?.matchPercentage || 0} />
             {hasApplied ? (
               <>
-              <p className="text-center text-red-500 font-semibold">
-                We've received your proposal for this job and are waiting for the job provider's response.
-              </p>
-              <Button
-                content="Update Proposal"
-                onClick={() => window.location.replace(`/jobs/${jobId}/submit-proposal`)}
-                className="w-full text-2xl py-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300"
-              />
+                <p className="text-center text-red-500 font-semibold">
+                  We've received your proposal for this job and are waiting for the job provider's response.
+                </p>
+                <Button
+                  content="Update Proposal"
+                  onClick={() => window.location.replace(`/jobs/${jobId}/update-proposal`)}
+                  className="w-full text-2xl py-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-all duration-300"
+                />
               </>
             ) : (
               <Button

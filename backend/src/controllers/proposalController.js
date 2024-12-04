@@ -86,6 +86,11 @@ const updateProposal = async (req, res) => {
     const { proposalId } = req.params;
     const { budgetType, budgetAmount, budgetHourlyRate, coverLetterText, attachments } = req.body;
 
+    // Validate input
+    if (!proposalId) {
+      return res.status(400).json({ message: "Proposal ID is required." });
+    }
+
     // Find the proposal
     const proposal = await Proposal.findById(proposalId);
     if (!proposal) {
@@ -97,27 +102,48 @@ const updateProposal = async (req, res) => {
       return res.status(403).json({ message: "You are not authorized to update this proposal." });
     }
 
+    // Validate budgetType and budget values
+    if (budgetType && !["Fixed", "Hourly"].includes(budgetType)) {
+      return res.status(400).json({ message: "Invalid budget type. Allowed values are 'Fixed' or 'Hourly'." });
+    }
+
+    if (budgetType === "Fixed" && (isNaN(budgetAmount) || budgetAmount <= 0)) {
+      return res.status(400).json({ message: "Budget amount must be a positive number for a 'Fixed' budget type." });
+    }
+
+    if (budgetType === "Hourly" && (isNaN(budgetHourlyRate) || budgetHourlyRate <= 0)) {
+      return res.status(400).json({ message: "Hourly rate must be a positive number for an 'Hourly' budget type." });
+    }
+
     // Update the proposal fields
     proposal.budgetType = budgetType || proposal.budgetType;
     proposal.budgetAmount = budgetType === "Fixed" ? budgetAmount : proposal.budgetAmount;
     proposal.budgetHourlyRate = budgetType === "Hourly" ? budgetHourlyRate : proposal.budgetHourlyRate;
     proposal.coverLetterText = coverLetterText || proposal.coverLetterText;
-    proposal.attachments = attachments || proposal.attachments;
+    proposal.attachments = attachments?.length > 0 ? attachments : proposal.attachments;
     proposal.updatedAt = Date.now();
 
+    // Save the updated proposal
     await proposal.save();
+
     res.status(200).json({ message: "Proposal updated successfully.", proposal });
   } catch (error) {
-    next(error);
+    console.error("Error updating proposal:", error);
+    res.status(500).json({ message: "An error occurred while updating the proposal.", error: error.message });
   }
 };
+
+
 
 // @desc Delete a proposal by Proposal ID and Job ID
 // @route DELETE /api/proposals/:jobId/:proposalId
 // @access Freelancer
-const deleteProposal = async (req, res) => {
+const deleteProposal = async (req, res, next) => {
   try {
     const { proposalId, jobId } = req.params;
+
+    console.log("Deleting proposal with ID:", proposalId);
+    console.log("From job with ID:", jobId);
 
     // Find the proposal
     const proposal = await Proposal.findById(proposalId);
@@ -138,16 +164,18 @@ const deleteProposal = async (req, res) => {
     if (job) {
       job.proposalsCount = Math.max(0, job.proposalsCount - 1);
       job.receivedProposals = job.receivedProposals.filter(
-        (proposalId) => proposalId.toString() !== proposal._id.toString()
+        (id) => id.toString() !== proposal._id.toString()
       );
       await job.save();
     }
 
     res.status(200).json({ message: "Proposal deleted successfully." });
   } catch (error) {
+    console.error("Error deleting proposal:", error);
     next(error);
   }
 };
+
 
 // @desc Get the current user's proposal for a specific job
 // @route GET /api/proposals/:jobId/me

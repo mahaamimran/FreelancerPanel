@@ -1,41 +1,52 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { submitProposal } from "../services/proposalService";
+import { fetchUserProposal, updateProposal, deleteProposal } from "../services/proposalService";
 import { fetchJobById } from "../services/jobService";
 import AuthContext from "../context/AuthContext";
-import { motion } from "framer-motion";
 import ProposalForm from "../components/ProposalForm";
 import TipsToStandOut from "../components/TipsToStandOut";
+import { motion } from "framer-motion";
+import { Spinner } from "../components/ui/Spinner";
 
-const SubmitProposalPage = () => {
-  const { id: jobId } = useParams();
+const UpdateProposalPage = () => {
+  const { jobId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [proposal, setProposal] = useState(null);
   const [jobDetails, setJobDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
-    const fetchJobDetails = async () => {
+    const fetchDetails = async () => {
+      if (user === null) return; // Wait until AuthContext initializes
+      if (!user || !user.token) {
+        navigate("/login");
+        return;
+      }
+
       try {
         const jobData = await fetchJobById(jobId);
         setJobDetails(jobData);
+
+        const userProposal = await fetchUserProposal(jobId, user.token);
+        setProposal(userProposal);
       } catch (err) {
-        setError("Failed to load job details.");
+        setError("Failed to load job or proposal details.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchJobDetails();
-  }, [jobId]);
+    fetchDetails();
+  }, [jobId, user, navigate]);
 
-  const handleSubmit = async (proposalData) => {
+  const handleUpdate = async (updatedProposal) => {
     try {
-      await submitProposal({ ...proposalData, jobId }, user.token);
-      setSuccessMessage("Proposal submitted successfully!");
+      await updateProposal(proposal._id, { ...updatedProposal, jobId }, user.token);
+      setSuccessMessage("Proposal updated successfully!");
       setTimeout(() => {
         navigate(`/jobs/${jobId}`);
       }, 2000);
@@ -44,9 +55,23 @@ const SubmitProposalPage = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteProposal(proposal._id, jobId, user.token);
+      setSuccessMessage("Proposal deleted successfully!");
+      setTimeout(() => {
+        navigate(`/jobs/${jobId}`);
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete proposal.");
+    }
+  };
+
+  if (user === null || isLoading) return <><Spinner></Spinner></>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -55,18 +80,15 @@ const SubmitProposalPage = () => {
       >
         <div className="container mx-auto text-center">
           <h1 className="text-7xl font-bold text-secondary mt-16">
-            SUBMIT A <span className="text-primary">PROPOSAL</span>
+            UPDATE YOUR <span className="text-primary">PROPOSAL</span>
           </h1>
           <p className="mt-4 text-xl text-gray-600">
-            Create the perfect proposal as{" "}
-            <span className="font-bold">{jobDetails?.title}</span> for <span className="font-bold">{jobDetails?.provider?.name}</span>
+            Modify your proposal for <span className="font-bold">{jobDetails?.title}</span>
           </p>
         </div>
       </motion.div>
 
-      {/* Content Section */}
       <div className="container mx-auto mt-10 px-4 lg:px-0 grid lg:grid-cols-3 gap-8">
-        {/* Proposal Form */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -79,14 +101,19 @@ const SubmitProposalPage = () => {
             </div>
           )}
           {error && <p className="text-red-500 mb-4">{error}</p>}
-          <ProposalForm onSubmit={handleSubmit} />
+          <ProposalForm
+            initialValues={proposal}
+            onSubmit={handleUpdate}
+            onDelete={handleDelete}
+            isEditing={true}
+          />
         </motion.div>
 
-        {/* Tips Section */}
+        {/* Sidebar with Tips */}
         <TipsToStandOut />
       </div>
     </div>
   );
 };
 
-export default SubmitProposalPage;
+export default UpdateProposalPage;

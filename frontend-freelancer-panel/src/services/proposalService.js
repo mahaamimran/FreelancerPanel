@@ -42,3 +42,21 @@ export const submitProposal = async (proposalData, token) => {
     }
   };
   
+  export const fetchProposalById = async (proposalId, token) => {
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const response = await axios.get(`${API_URL}/${proposalId}`, config);
+    return response.data;
+  };
+  
+  export const updateProposal = async (proposalId, updatedProposal, token) => {
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const response = await axios.put(`${API_URL}/${proposalId}`, updatedProposal, config);
+    return response.data;
+  };
+  
+  export const deleteProposal = async (jobId, proposalId, token) => {
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const response = await axios.delete(`${API_URL}/${jobId}/${proposalId}`, config);
+    return response.data;
+  };
+  
