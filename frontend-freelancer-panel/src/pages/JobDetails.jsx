@@ -1,9 +1,9 @@
-// src/pages/JobDetails.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchJobById } from "../services/jobService";
 import { fetchSkills } from "../services/skillService"; // Fetch skills here
 import { fetchUserProposal } from "../services/proposalService";
+import { fetchUserProfile } from "../services/userService"; // Fetch user profile here
 import AuthContext from "../context/AuthContext";
 import JobInfo from "../components/JobInfo";
 import AboutJobProvider from "../components/AboutJobProvider";
@@ -20,6 +20,7 @@ const JobDetails = () => {
   const [skillsMap, setSkillsMap] = useState({});
   const [hasApplied, setHasApplied] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [matchPercentage, setMatchPercentage] = useState(0); // Match percentage
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,6 +38,26 @@ const JobDetails = () => {
           mapping[skill._id] = skill.name;
         });
         setSkillsMap(mapping);
+
+        // Fetch user profile to get their skills
+        if (token) {
+          const userProfile = await fetchUserProfile(token);
+          setProfile(userProfile);
+
+          // Calculate match percentage
+          const userSkillIds = userProfile.skills.map((skill) =>
+            typeof skill === "string" ? skill : skill._id
+          );
+          const requiredSkillIds = jobData.requiredSkills || [];
+          const matchedSkills = requiredSkillIds.filter((id) =>
+            userSkillIds.includes(id)
+          );
+          const percentage =
+            requiredSkillIds.length > 0
+              ? (matchedSkills.length / requiredSkillIds.length) * 100
+              : 0;
+          setMatchPercentage(Math.round(percentage));
+        }
 
         // Check if the user has submitted a proposal for this job
         if (token) {
@@ -89,7 +110,7 @@ const JobDetails = () => {
 
         {token ? (
           <>
-            <LoggedInPanel matchPercentage={profile?.matchPercentage || 0} />
+            <LoggedInPanel matchPercentage={matchPercentage} />
             {hasApplied ? (
               <>
                 <p className="text-center text-red-500 font-semibold">
