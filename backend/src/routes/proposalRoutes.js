@@ -4,6 +4,9 @@ const proposalController = require("../controllers/proposalController");
 
 const router = express.Router();
 
+// Route to get jobs user has applied to
+router.get("/my-jobs", protect, proposalController.getJobsAppliedTo);
+
 // Route to submit a proposal
 router.post("/", protect, proposalController.submitProposal);
 

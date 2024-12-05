@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import api from "./api";
 const API_URL = `${import.meta.env.VITE_API_URL}/proposals`;
 
 export const submitProposal = async (proposalData, token) => {
@@ -71,4 +71,19 @@ export const submitProposal = async (proposalData, token) => {
       throw error;
     }
   };
+
+  export const fetchAppliedJobs = async (token) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
   
+      const response = await api.get("/proposals/my-jobs", config); // Use the `api` instance
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching applied jobs:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Failed to fetch applied jobs.");
+    }
+  };

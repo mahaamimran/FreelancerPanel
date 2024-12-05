@@ -1,36 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserProfile } from "../services/userService";
+import { fetchAppliedJobs } from "../services/proposalService";
 import { Button } from "../components/ui/Button";
 import classNames from "classnames";
 
 export default function AccountPage() {
   const [profile, setProfile] = useState(null);
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const [error, setError] = useState("");
   const [isFadedIn, setIsFadedIn] = useState(false); // Animation state
   const token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).token : null;
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       try {
         if (!token) {
           throw new Error("User is not authenticated. Please log in.");
         }
 
-        const data = await fetchUserProfile(token);
+        const profileData = await fetchUserProfile(token);
+        const appliedJobsData = await fetchAppliedJobs(token);
 
-        // Ensure the data has expected structure
-        if (!data || typeof data !== "object") {
-          throw new Error("Unexpected response format from the server.");
-        }
-
-        setProfile(data);
+        setProfile(profileData);
+        setAppliedJobs(appliedJobsData);
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err.message || "Failed to fetch profile.");
+        console.error("Error fetching data:", err);
+        setError(err.message || "Failed to fetch profile or applied jobs.");
       }
     };
 
-    fetchProfile();
+    fetchData();
 
     // Fade-in animation trigger
     const fadeTimer = setTimeout(() => setIsFadedIn(true), 100);
@@ -39,7 +38,7 @@ export default function AccountPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-4xl p-8">
+      <div className="container mx-auto max-w-4xl p-8 mt-16">
         <p className="text-center text-red-500">{error}</p>
         <Button
           content="Go to Login"
@@ -62,104 +61,101 @@ export default function AccountPage() {
   return (
     <div
       className={classNames(
-        "container mx-auto max-w-4xl p-8 transition-opacity duration-1000 ease-in-out",
+        "container mx-auto max-w-6xl p-8 mt-16 transition-opacity duration-1000 ease-in-out",
         isFadedIn ? "opacity-100" : "opacity-0"
       )}
     >
-      <div className="flex flex-col items-center bg-gray-50 shadow-lg rounded-lg p-8 mt-12">
-        {/* Name and Email */}
-        <h1 className="text-3xl font-bold text-secondary">
-          {profile.firstName} {profile.lastName}
-        </h1>
-        <p className="text-dark text-lg">{profile.email}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Profile Section */}
+        <div className="bg-gray-50 shadow-lg rounded-lg p-8 w-full">
+          <h2 className="text-xl font-bold text-secondary mb-4">Profile</h2>
 
-        {/* Role */}
-        <p className="mt-2 text-sm text-primary font-semibold uppercase tracking-wide">
-          {profile.role}
-        </p>
-
-        {/* Bio */}
-        {profile.bio ? (
-          <p className="mt-6 text-center text-dark text-lg">{profile.bio}</p>
-        ) : (
-          <p className="mt-6 text-center text-gray-400 text-lg">
-            No bio provided.
-          </p>
-        )}
-
-        {/* Skills */}
-        <div className="mt-8 w-full">
-          <h2 className="text-xl font-semibold text-secondary">Skills</h2>
-          {profile.skills?.length > 0 ? (
-            <ul className="mt-4 grid grid-cols-2 gap-4">
-              {profile.skills.map((skill) => (
+          {/* Applied Jobs Section */}
+          <h3 className="text-lg font-semibold text-secondary mb-2">Applied Jobs</h3>
+          {appliedJobs.length > 0 ? (
+            <ul className="space-y-4">
+              {appliedJobs.map((job) => (
                 <li
-                  key={skill._id || skill}
-                  className="text-sm text-white bg-secondary/90 px-4 py-3 rounded shadow"
+                  key={job.jobId}
+                  className="p-4 bg-white shadow-md rounded-lg hover:scale-105 transform transition-transform duration-300"
                 >
-                  {skill.name || skill}
+                  <h4 className="text-lg font-bold">{job.title}</h4>
+                  <p className="text-sm text-gray-600">{job.description}</p>
+                  <div className="mt-4 flex justify-between">
+                    <Button
+                      content="Update Proposal"
+                      className="bg-primary text-white px-4 py-2 rounded-lg"
+                      onClick={() => window.location.replace(`/jobs/${job.jobId}/update-proposal`)}
+                    />
+                    <Button
+                      content="Delete Proposal"
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                      onClick={() => console.log("Delete proposal logic here")}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-center text-gray-400">No skills added yet.</p>
+            <p className="text-gray-400 text-center">You haven't applied to any jobs yet.</p>
           )}
         </div>
 
-        {/* Stats */}
-        <div className="mt-8 grid grid-cols-2 gap-6 w-full text-center">
-          <div className="p-4 bg-gray-100 rounded shadow-lg">
-            <h3 className="text-2xl font-bold text-primary">
-              {profile.totalEarnings ?? 0}
-            </h3>
-            <p className="text-dark text-sm">Total Earnings</p>
-          </div>
-          <div className="p-4 bg-gray-100 rounded shadow-lg">
-            <h3 className="text-2xl font-bold text-primary">
-              {profile.avgRating?.toFixed(1) || "N/A"}
-            </h3>
-            <p className="text-dark text-sm">Average Rating</p>
-          </div>
-        </div>
+        {/* Account Section */}
+        <div className="bg-gray-50 shadow-lg rounded-lg p-8 w-full">
+          <h2 className="text-xl font-bold text-secondary mb-4">Account</h2>
 
-        {/* Edit Profile Button */}
-        <div className="mt-8">
+          {/* User Information */}
+          <div className="flex flex-col items-center mb-8">
+            <h1 className="text-3xl font-bold text-secondary">
+              {profile.firstName} {profile.lastName}
+            </h1>
+            <p className="text-dark text-lg">{profile.email}</p>
+            <p className="mt-2 text-sm text-primary font-semibold uppercase tracking-wide">
+              {profile.role}
+            </p>
+          </div>
+
+          {/* Skills */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-secondary mb-2">Skills</h3>
+            {profile.skills?.length > 0 ? (
+              <ul className="grid grid-cols-2 gap-4">
+                {profile.skills.map((skill) => (
+                  <li
+                    key={skill._id || skill}
+                    className="text-sm text-white bg-secondary/90 px-4 py-3 rounded shadow"
+                  >
+                    {skill.name || skill}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400">No skills added yet.</p>
+            )}
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="p-4 bg-gray-100 rounded shadow-lg">
+              <h3 className="text-2xl font-bold text-primary">{profile.totalEarnings ?? 0}</h3>
+              <p className="text-dark text-sm">Total Earnings</p>
+            </div>
+            <div className="p-4 bg-gray-100 rounded shadow-lg">
+              <h3 className="text-2xl font-bold text-primary">
+                {profile.avgRating?.toFixed(1) || "N/A"}
+              </h3>
+              <p className="text-dark text-sm">Average Rating</p>
+            </div>
+          </div>
+
+          {/* Edit Account Button */}
           <Button
-            content="Edit Profile"
-            className="bg-primary hover:bg-primary"
-            onClick={() => window.location.replace("/edit-profile")}
+            content="Edit Account"
+            className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-all duration-300"
+            onClick={() => window.location.replace("/account-settings")}
           />
         </div>
-      </div>
-
-      {/* Reviews Section */}
-      <div className="mt-12 bg-gray-50 shadow-lg rounded-lg p-8">
-        <h2 className="text-xl font-semibold text-secondary border-b pb-4">
-          Reviews
-        </h2>
-        {profile.reviews?.length > 0 ? (
-          <ul className="mt-4 space-y-4">
-            {profile.reviews.map((review, index) => (
-              <li
-                key={index}
-                className="p-4 bg-gray-50 rounded-lg shadow border border-gray-100"
-              >
-                <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-semibold text-dark">
-                    {review.reviewerName}
-                  </h3>
-                  <span className="text-primary font-bold">
-                    {review.rating} ⭐
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500">{review.date}</p>
-                <p className="mt-2 text-sm text-gray-700">{review.comment}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4 text-center text-gray-400">No reviews yet.</p>
-        )}
       </div>
     </div>
   );

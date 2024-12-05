@@ -60,7 +60,7 @@ module.exports = { submitProposal };
 // @desc Get proposals by Job ID
 // @route GET /api/proposals/:jobId
 // @access Freelancer
-const getProposalsByJobId = async (req, res) => {
+const getProposalsByJobId = async (req, res, next) => {
   try {
     const { jobId } = req.params;
 
@@ -74,9 +74,10 @@ const getProposalsByJobId = async (req, res) => {
     const proposals = await Proposal.find({ jobId });
     res.status(200).json(proposals);
   } catch (error) {
-    next(error);
+    next(error); 
   }
 };
+
 
 // @desc Update a proposal by Proposal ID
 // @route PUT /api/proposals/:proposalId
@@ -199,10 +200,32 @@ const getProposalForJobByUser = async (req, res, next) => {
 };
 
 
+// @desc Get jobs user has applied to
+// @route GET /api/proposals/my-jobs
+// @access Private
+const getJobsAppliedTo = async (req, res, next) => {
+  try {
+    const proposals = await Proposal.find({ freelancerId: req.user._id }).populate("jobId");
+    const jobs = proposals.map((proposal) => ({
+      jobId: proposal.jobId._id,
+      title: proposal.jobId.title,
+      description: proposal.jobId.description,
+      budgetType: proposal.jobId.budgetType,
+      budgetAmount: proposal.jobId.budgetAmount,
+      proposalId: proposal._id,
+    }));
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    next(error);
+  }
+};
+
 module.exports = {
   submitProposal,
   getProposalsByJobId,
   updateProposal,
   deleteProposal,
   getProposalForJobByUser,
+  getJobsAppliedTo
 };
