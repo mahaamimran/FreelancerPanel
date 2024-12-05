@@ -47,46 +47,66 @@ const JobList = () => {
   };
 
   return (
-    <motion.div
-      className="container mx-auto mt-20" // Added top margin to avoid bumping into the navbar
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      {/* Search Bar */}
+    <div className="min-h-screen bg-gray-100">
+      {/* Animated Header Section */}
       <motion.div
-        className="mb-8"
-        variants={itemVariants}
-        key="search-bar" // Helps with reanimation when refreshed
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="bg-white py-12"
       >
-        <SearchBar onSearch={handleSearch} />
+        <div className="container mx-auto text-center">
+          <h1 className="text-6xl font-bold text-secondary mt-16">
+            FIND THE PERFECT <span className="text-primary">JOB</span>
+          </h1>
+          <p className="mt-4 text-lg text-gray-600">
+            Discover opportunities and find the perfect job to match your skills.
+          </p>
+        </div>
       </motion.div>
 
-      <main className="grid grid-cols-12 gap-8">
-        {/* Filters Section */}
-        <motion.aside
-          className="col-span-3"
+      {/* Main Content Section */}
+      <motion.div
+        className="container mx-auto mt-12 px-4 lg:px-0"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {/* Search Bar */}
+        <motion.div
+          className="mb-8"
           variants={itemVariants}
-          key="filters" // Key for animation reinitialization
+          key="search-bar" // Helps with reanimation when refreshed
         >
-          <Filters onFilterChange={handleFilterChange} />
-        </motion.aside>
+          <SearchBar onSearch={handleSearch} />
+        </motion.div>
 
-        {/* Job Content Section */}
-        <motion.section
-          className="col-span-9"
-          variants={itemVariants}
-          key="job-content"
-        >
-          <JobContent
-            jobs={jobs}
-            currentPage={currentPage}
-            jobsPerPage={5}
-            onPageChange={handlePageChange}
-          />
-        </motion.section>
-      </main>
-    </motion.div>
+        <main className="grid grid-cols-12 gap-8">
+          {/* Filters Section */}
+          <motion.aside
+            className="col-span-3"
+            variants={itemVariants}
+            key="filters" // Key for animation reinitialization
+          >
+            <Filters onFilterChange={handleFilterChange} />
+          </motion.aside>
+
+          {/* Job Content Section */}
+          <motion.section
+            className="col-span-9"
+            variants={itemVariants}
+            key="job-content"
+          >
+            <JobContent
+              jobs={jobs}
+              currentPage={currentPage}
+              jobsPerPage={5}
+              onPageChange={handlePageChange}
+            />
+          </motion.section>
+        </main>
+      </motion.div>
+    </div>
   );
 };
 
