@@ -24,3 +24,19 @@ export const fetchJobById = async (id) => {
     throw error;
   }
 };
+
+export const fetchInProgressJobs = async (token) => {
+  try {
+    const response = await api.get("/jobs/in-progress", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.data.success) {
+      return response.data.data;
+    }
+    throw new Error("Failed to fetch in-progress jobs.");
+  } catch (error) {
+    console.error("Error in fetchInProgressJobs:", error.response || error.message);
+    throw error;
+  }
+};

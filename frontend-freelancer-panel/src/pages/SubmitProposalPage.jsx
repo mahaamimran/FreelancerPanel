@@ -58,8 +58,8 @@ const SubmitProposalPage = () => {
             SUBMIT A <span className="text-primary">PROPOSAL</span>
           </h1>
           <p className="mt-4 text-xl text-gray-600">
-            Create the perfect proposal as{" "}
-            <span className="font-bold">{jobDetails?.title}</span> for <span className="font-bold">{jobDetails?.provider?.name}</span>
+            Create the perfect proposal for{" "}
+            <span className="font-bold">{jobDetails?.title}</span>
           </p>
         </div>
       </motion.div>
@@ -83,7 +83,15 @@ const SubmitProposalPage = () => {
         </motion.div>
 
         {/* Tips Section */}
-        <TipsToStandOut />
+        <TipsToStandOut
+          tips={[
+            "Personalize your proposal to the job and provider.",
+            "Highlight your relevant experience and achievements.",
+            "Provide concrete examples or case studies of past work.",
+            "Be concise, professional, and confident in your tone.",
+            "Ensure your budget is competitive yet fair for your expertise.",
+          ]}
+        />
       </div>
     </div>
   );

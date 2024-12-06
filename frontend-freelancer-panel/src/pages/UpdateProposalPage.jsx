@@ -127,8 +127,16 @@ const UpdateProposalPage = () => {
           />
         </motion.div>
 
-        {/* Sidebar with Tips */}
-        <TipsToStandOut />
+           {/* Tips Section */}
+           <TipsToStandOut
+          tips={[
+            "Personalize your proposal to the job and provider.",
+            "Highlight your relevant experience and achievements.",
+            "Provide concrete examples or case studies of past work.",
+            "Be concise, professional, and confident in your tone.",
+            "Ensure your budget is competitive yet fair for your expertise.",
+          ]}
+        />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
 import React from "react";
+import { motion } from "framer-motion";
 
-const TipsToStandOut = () => (
+const TipsToStandOut = ({ tips }) => (
   <motion.div
     initial={{ opacity: 0, x: 50 }}
     animate={{ opacity: 1, x: 0 }}
@@ -10,12 +10,11 @@ const TipsToStandOut = () => (
   >
     <h3 className="text-lg font-semibold text-primary mb-4">💡 Tips to Stand Out</h3>
     <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2">
-      <li>Personalize your proposal to the job and provider.</li>
-      <li>Highlight your relevant experience and achievements.</li>
-      <li>Provide concrete examples or case studies of past work.</li>
-      <li>Be concise, professional, and confident in your tone.</li>
-      <li>Ensure your budget is competitive yet fair for your expertise.</li>
+      {tips.map((tip, index) => (
+        <li key={index}>{tip}</li>
+      ))}
     </ul>
   </motion.div>
 );
+
 export default TipsToStandOut;

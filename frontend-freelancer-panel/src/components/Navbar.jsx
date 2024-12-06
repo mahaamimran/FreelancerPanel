@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import AuthContext from "../context/AuthContext";
@@ -16,7 +16,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Navbar */}
       <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
         <div className="container mx-auto flex items-center justify-between h-16 px-4 md:px-8">
           {/* Logo Section */}
@@ -28,12 +27,14 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex space-x-6 text-sm font-medium text-black">
-            <Link to="/find-talent" className="hover:text-primary">
-              Find Talent
-            </Link>
             <Link to="/jobs" className="hover:text-primary">
               Find Work
             </Link>
+            {user && (
+            <Link to="/active-jobs" className="hover:text-primary">
+              Active Jobs
+            </Link>
+            )}
             <Link to="/about" className="hover:text-primary">
               About Us
             </Link>
@@ -44,7 +45,7 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* User Greeting or Authentication Buttons (Desktop) */}
+          {/* User Authentication */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
@@ -103,20 +104,20 @@ export default function Navbar() {
               <ul className="flex flex-col space-y-4 p-4">
                 <li>
                   <Link
-                    to="/find-talent"
-                    className="block text-sm font-medium text-black hover:text-primary"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Find Talent
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     to="/jobs"
                     className="block text-sm font-medium text-black hover:text-primary"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Find Work
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/active-jobs"
+                    className="block text-sm font-medium text-black hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Active Jobs
                   </Link>
                 </li>
                 <li>

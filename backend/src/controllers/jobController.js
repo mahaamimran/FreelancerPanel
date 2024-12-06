@@ -249,6 +249,25 @@ const deleteJob = async (req, res, next) => {
   }
 };
 
+// @desc    List in-progress jobs for a freelancer
+// @route   GET /api/jobs/in-progress
+// @access  Private
+const listInProgressJobsForFreelancer = async (req, res, next) => {
+  try {
+    const freelancerId = req.user._id; // Assuming `req.user` contains the authenticated user's details
+
+    const jobs = await Job.find({ status: "In Progress", freelancerId })
+      .populate("category", "name") // Populate category details
+      .populate("jobProviderId", "firstName lastName email"); // Populate job provider details
+
+    res.status(200).json({
+      success: true,
+      data: jobs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   listJobs,
@@ -258,5 +277,6 @@ module.exports = {
   addJob,
   getJobById,
   updateJob,
-  deleteJob
+  deleteJob,
+  listInProgressJobsForFreelancer,
 };
