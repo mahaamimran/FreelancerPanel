@@ -3,8 +3,9 @@ import { sendEmailToProvider } from "../services/emailService";
 import AuthContext from "../context/AuthContext";
 import { Textarea } from "../components/ui/Textarea";
 import { ValidationError } from "../components/ui/ValidationError";
+import Button from "../components/ui/Button"; // Import the Button component
 
-const EmailJobProvider = ({ email }) => { // Updated prop name
+const EmailJobProvider = ({ email }) => {
   const { user } = useContext(AuthContext);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
@@ -13,7 +14,7 @@ const EmailJobProvider = ({ email }) => { // Updated prop name
   useEffect(() => {
     console.log("Debug: Loaded EmailJobProvider component");
     console.log("Debug: User in AuthContext:", user);
-    console.log("Debug: Provider Email passed as prop:", email); // Updated
+    console.log("Debug: Provider Email passed as prop:", email);
   }, [user, email]);
 
   const handleSubmit = async (e) => {
@@ -43,7 +44,14 @@ const EmailJobProvider = ({ email }) => { // Updated prop name
 
     setStatus("Sending email...");
     console.log("Debug: Preparing to send email...");
-    console.log("Debug: Email details - Provider Email:", email, ", User Name:", user.firstName, ", Message:", message);
+    console.log(
+      "Debug: Email details - Provider Email:",
+      email,
+      ", User Name:",
+      user.firstName,
+      ", Message:",
+      message
+    );
 
     try {
       await sendEmailToProvider({
@@ -73,12 +81,11 @@ const EmailJobProvider = ({ email }) => { // Updated prop name
             error={error}
             maxLength={500}
           />
-          <button
+          <Button
+            content="Send Email"
             type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-md shadow-md hover:bg-primary-dark transition-all duration-300"
-          >
-            Send Email
-          </button>
+            className="w-full" // Ensure full-width styling
+          />
           {status && (
             <p
               className={`mt-4 text-sm ${
