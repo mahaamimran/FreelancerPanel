@@ -5,7 +5,7 @@ const JobCard = ({ job }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/jobs/${job._id}`); // Navigate to Job Details
+    navigate(`/jobs/${job._id}`); 
   };
 
   return (

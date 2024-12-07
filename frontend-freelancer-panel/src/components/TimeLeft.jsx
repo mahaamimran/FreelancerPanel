@@ -44,21 +44,21 @@ const TimeLeft = ({ deadline }) => {
       {["days", "hours", "minutes", "seconds"].map((unit, index) => (
         <div
           key={index}
-          className="flex flex-col justify-center items-center bg-white/20 backdrop-blur-md rounded-lg px-4 py-6 shadow-lg text-black"
+          className="flex flex-col justify-center items-center bg-white/20 backdrop-blur-md rounded-lg px-6 py-8 shadow-lg text-black"
           style={{
-            width: "80px",
-            height: "120px",
+            width: "100px",
+            height: "150px",
             textAlign: "center",
-            fontFamily: "'Roboto Mono', monospace", // Add robotic-looking font
+            fontFamily: "'Roboto Mono', monospace",
           }}
         >
           <p
-            className="text-4xl font-bold"
-            style={{ textShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}
+            className="text-5xl font-extrabold"
+            style={{ textShadow: "0px 6px 10px rgba(0, 0, 0, 0.15)" }}
           >
             {timeLeft[unit]}
           </p>
-          <span className="text-sm uppercase font-medium tracking-wide">{unit}</span>
+          <span className="text-lg uppercase font-bold tracking-widest">{unit}</span>
         </div>
       ))}
     </div>
