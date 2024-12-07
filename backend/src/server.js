@@ -22,12 +22,14 @@ const skillRoutes = require("./routes/skillRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const proposalRoutes = require("./routes/proposalRoutes");
 const emailRoutes = require("./routes/email");
+const submissionRoutes = require("./routes/submissionRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/proposals", proposalRoutes);
 app.use("/api/email", emailRoutes);
+app.use("/api/submissions", submissionRoutes);
 
 // Middleware for error handling
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
