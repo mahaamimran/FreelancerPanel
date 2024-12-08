@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/Input";
 import { login } from "@/services/loginService";
 import AuthContext from "@/context/AuthContext";
 import googleLogo from "../assets/google-logo.svg";
-import logo from "../assets/logo-without-text.png"; 
+import logo from "../assets/logo-without-text.png";
 import DynamicText from "@/components/DynamicText";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,10 @@ export default function LoginPage() {
   const { login: setUserLogin } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleGoogleLogin = () => {
+    // window.open(`${import.meta.env.VITE_API_URL}/v1/auth/google`, "_self");
+    window.open("http://localhost:3000/api/v1/auth/google", "_self");
+  };
   const validateForm = () => {
     const newErrors = {};
     if (!email.includes("@")) newErrors.email = "Invalid email format.";
@@ -81,17 +86,7 @@ export default function LoginPage() {
             Log In
           </button>
           {/* Login with Google Button */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-center px-4 py-3 bg-white text-dark border border-gray-300 rounded-xl text-lg font-semibold hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 transition"
-          >
-            <img
-              src={googleLogo}
-              alt="Google"
-              className="h-5 w-5 mr-2"
-            />
-            Log in with Google
-          </button>
+          <GoogleLoginButton onClick={handleGoogleLogin} />
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?{" "}

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid"; // Import uuid
 import Button from "../components/ui/Button";
+import AuthContext from "../context/AuthContext";
 
 const TrailDot = ({ x, y }) => {
   return (
@@ -28,15 +29,34 @@ const TrailDot = ({ x, y }) => {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [trail, setTrail] = useState([]); // Array of dots
+  const { login } = useContext(AuthContext); // Use AuthContext for login
 
-  const handleGetStarted = () => {
-    navigate("/jobs");
-  };
+  useEffect(() => {
+    // Handle authentication by extracting token and user info from URL
+    const handleAuthentication = () => {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+      const user = params.get("user");
+
+      if (token && user) {
+        try {
+          // Parse user data and save it with the token
+          const parsedUser = JSON.parse(decodeURIComponent(user));
+          login({ ...parsedUser, token });
+          window.history.replaceState({}, document.title, "/dashboard"); // Clean up URL
+        } catch (err) {
+          console.error("Error parsing user data:", err);
+        }
+      }
+    };
+
+    handleAuthentication();
+  }, [login]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
       setTrail((prevTrail) => [
-        ...prevTrail.slice(-15), // Keep only the last 12 dots
+        ...prevTrail.slice(-15), // Keep only the last 15 dots
         { x: e.clientX, y: e.clientY, id: uuidv4() }, // Generate a UUID for the dot
       ]);
     };
@@ -47,6 +67,10 @@ const LandingPage = () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  const handleGetStarted = () => {
+    navigate("/jobs");
+  };
 
   return (
     <div className="relative bg-gradient-to-b from-white via-primary/10 to-primary/50 min-h-screen flex flex-col items-center justify-center text-dark overflow-hidden pt-10">

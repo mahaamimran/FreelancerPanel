@@ -2,6 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+require("./middleware/googleAuth");
+const passport = require("passport");
+
 
 dotenv.config();
 connectDB();
@@ -11,6 +14,7 @@ const app = express();
 // Apply CORS middleware BEFORE defining routes
 app.use(cors());
 
+app.use(passport.initialize());
 
 
 // Apply JSON body parser middleware
@@ -23,7 +27,9 @@ const jobRoutes = require("./routes/jobRoutes");
 const proposalRoutes = require("./routes/proposalRoutes");
 const emailRoutes = require("./routes/email");
 const submissionRoutes = require("./routes/submissionRoutes");
+const googleAuthRoutes = require("./routes/googleAuthRoutes");
 
+app.use("/api/v1/auth/", googleAuthRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/jobs", jobRoutes);
