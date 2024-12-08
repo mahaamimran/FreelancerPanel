@@ -15,4 +15,7 @@ router.put("/:id", protect, submissionController.updateSubmission);
 // DELETE: Delete a specific submission
 router.delete("/:id", protect, submissionController.deleteSubmission);
 
+// GET: Get a specific submission by ID
+router.get("/submission/:id", protect, submissionController.getSubmissionById);
+
 module.exports = router;

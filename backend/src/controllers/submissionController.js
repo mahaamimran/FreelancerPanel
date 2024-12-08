@@ -23,6 +23,16 @@ const createSubmission = async (req, res, next) => {
       return next(error);
     }
 
+    // Check if a submission already exists for this job and freelancer
+    const existingSubmission = await Submission.findOne({
+      jobId,
+      freelancerId: req.user._id,
+    });
+
+    if (existingSubmission) {
+      return res.status(400).json({ message: "You have already submitted work for this job." });
+    }
+
     const submission = await Submission.create({
       jobId,
       freelancerId: req.user._id,
@@ -37,6 +47,7 @@ const createSubmission = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // @desc Get all submissions for a job
 // @route GET /api/submissions/job/:jobId
@@ -153,9 +164,28 @@ const deleteSubmission = async (req, res, next) => {
   }
 };
 
+// Get a specific submission by ID
+const getSubmissionById = async (req, res, next) => {
+  try {
+    const submission = await Submission.findById(req.params.id)
+      .populate("freelancerId", "firstName lastName email")
+      .populate("jobProviderId", "firstName lastName email");
+
+    if (!submission) {
+      return res.status(404).json({ success: false, message: "Submission not found" });
+    }
+
+    res.status(200).json({ success: true, data: submission });
+  } catch (error) {
+    console.error("Error fetching submission by ID:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   createSubmission,
   getSubmissionsByJob,
   updateSubmission,
   deleteSubmission,
+  getSubmissionById,
 };

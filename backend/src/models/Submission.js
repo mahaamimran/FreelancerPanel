@@ -37,7 +37,7 @@ const submissionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Complete"], // Restricts values to "Pending" or "Complete"
+    enum: ["Pending", "Accepted", "Rejected", "Complete"], // Restricts values to "Pending" or "Complete"
     default: "Pending", // Default status is "Pending"
   },
   createdAt: {

@@ -1,27 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import { FileInput } from "../components/ui/FileInput";
-import { Input } from "../components/ui/Input";
-import { Textarea } from "../components/ui/Textarea";
-import { Button } from "../components/ui/Button";
+import { Spinner } from "../components/ui/Spinner";
 import { ValidationError } from "../components/ui/ValidationError";
-import TipsToStandOut from "../components/TipsToStandOut";
-import { Card, CardHeader, CardContent, CardTitle } from "../components/ui/Card";
-import TimeLeft from "../components/TimeLeft";
+import { motion } from "framer-motion";
 import { createSubmission } from "../services/submissionService";
 import { fetchJobById } from "../services/jobService";
+import SubmissionForm from "../components/SubmissionForm";
+import TipsToStandOut from "../components/TipsToStandOut";
+import TimeLeft from "../components/TimeLeft";
 
 const SubmissionPage = () => {
-  const { user } = useContext(AuthContext); // Access user from AuthContext
+  const { user } = useContext(AuthContext);
   const { id: jobId } = useParams();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [attachments, setAttachments] = useState([]);
-  const [error, setError] = useState("");
-  const [job, setJob] = useState(null);
+  const navigate = useNavigate();
 
-  const deadline = job?.deadline || "2024-12-31T23:59:59"; // Default deadline if unavailable
+  const [job, setJob] = useState(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const tips = [
     "Keep your title short and descriptive.",
@@ -33,110 +30,109 @@ const SubmissionPage = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
+        setIsLoading(true);
         const fetchedJob = await fetchJobById(jobId);
+        if (!fetchedJob) {
+          throw new Error("Job not found");
+        }
         setJob(fetchedJob);
       } catch (error) {
-        console.error("Error fetching job details:", error);
-        setError("Failed to fetch job details.");
+        console.error("Error fetching job details:", error.message);
+        setError(error.message || "Failed to fetch job details.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchJob();
   }, [jobId]);
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files).map((file) => ({
-      fileName: file.name,
-      fileUrl: URL.createObjectURL(file),
-    }));
-    setAttachments(files);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
+  const handleSubmit = async (submissionData) => {
     if (!user?.token) {
       setError("You must be logged in to submit your work.");
       return;
     }
 
-    if (!title || !description) {
-      setError("Both title and description are required.");
-      return;
-    }
-
     try {
-      await createSubmission({
-        jobId,
-        title,
-        text: description,
-        attachments,
-      });
-
-      alert("Submission created successfully!");
+      setError("");
+      await createSubmission({ ...submissionData, jobId });
+      setSuccessMessage("Submission created successfully!");
+      setTimeout(() => {
+        navigate(`/active-jobs/${jobId}`);
+      }, 2000);
     } catch (error) {
       console.error("Error creating submission:", error.message);
       setError(error.message || "Failed to create submission.");
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-32 px-6 lg:px-12">
-      {/* Banner */}
-      <div className="container mx-auto text-center mb-8">
-        <h1 className="text-6xl font-bold">
-          <span className="text-primary">SUBMIT</span>{" "}
-          <span className="text-secondary">YOUR WORK</span>
-        </h1>
-      </div>
+  if (isLoading) {
+    return <Spinner />;
+  }
 
-      {/* Job Information */}
-      <div className="container mx-auto mb-8 text-center">
-        {job && (
-          <h2 className="text-2xl font-bold text-primary">
-            Submit your work for <span className="text-secondary">{job.title}</span> for {job.jobProviderId.firstName} {job.jobProviderId.lastName}
-          </h2>
-        )}
-      </div>
+  if (error) {
+    return <p className="text-red-500 text-center mt-20">{error}</p>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Success Message */}
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="p-4 text-center bg-green-100 text-green-700 font-semibold rounded-md"
+        >
+          {successMessage}
+        </motion.div>
+      )}
+
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-white py-12"
+      >
+        <div className="container mx-auto text-center">
+          <h1 className="text-7xl font-bold text-secondary mt-16">
+            SUBMIT YOUR <span className="text-primary">WORK</span>
+          </h1>
+          {job && (
+            <p className="mt-4 text-xl text-gray-600">
+              Submit your work for{" "}
+              <span className="font-bold text-primary">{job.title}</span>
+            </p>
+          )}
+        </div>
+      </motion.div>
 
       {/* Main Content */}
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="container mx-auto mt-10 px-4 lg:px-0 grid lg:grid-cols-3 gap-8">
         {/* Form Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Submission Form</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {error && <ValidationError message={error} />}
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <Input
-                type="text"
-                placeholder="Enter the title of your submission"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <Textarea
-                label="Description"
-                placeholder="Provide a detailed description of your work"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                maxLength={1000}
-              />
-              <FileInput label="Attachments (Optional)" onChange={handleFileChange} />
-              <Button content="Submit Work" type="submit" className="w-full" />
-            </form>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="lg:col-span-2 bg-white p-8 rounded-lg shadow-lg"
+        >
+          {error && <ValidationError message={error} />}
+          <SubmissionForm
+            onSubmit={handleSubmit}
+            isEditing={false}
+            buttonClass="w-full bg-primary hover:bg-primary-dark" // Full-width buttons
+          />
+        </motion.div>
 
         {/* Tips Section */}
         <TipsToStandOut tips={tips} />
       </div>
 
-      {/* Timer Reminder */}
+      {/* Deadline Section */}
       <div className="mt-12">
-        <h2 className="text-center text-3xl font-bold text-primary mb-4">Deadline Reminder</h2>
-        <TimeLeft deadline={deadline} />
+        <h2 className="text-center text-3xl font-bold text-primary mb-4">Time Left</h2>
+        {job?.deadline && <TimeLeft deadline={job.deadline} />}
       </div>
     </div>
   );

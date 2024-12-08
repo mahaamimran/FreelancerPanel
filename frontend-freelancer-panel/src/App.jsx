@@ -12,7 +12,8 @@ import SubmitProposalPage from "./pages/SubmitProposalPage";
 import UpdateProposalPage from "./pages/UpdateProposalPage";
 import ActiveJobsPage from "./pages/ActiveJobsPage";
 import ActiveJobDetailsPage from "./pages/ActiveJobDetailsPage";
-import SubmissionPage from "./pages/SubmissionPage"; 
+import SubmissionPage from "./pages/SubmissionPage";
+import ViewSubmissionPage from "./pages/ViewSubmissionPage";
 import "./App.css";
 
 function App() {
@@ -23,10 +24,11 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/jobs" element={<JobList />} />
+          <Route path="/submissions/:id" element={<ViewSubmissionPage />} /> 
           <Route path="/active-jobs" element={<ActiveJobsPage />} />
           <Route path="/active-jobs/:id" element={<ActiveJobDetailsPage />} />
           <Route path="/active-jobs/:id/submit-work" element={<SubmissionPage />} />
-          <Route path="/submissions" element={<SubmissionPage />} /> 
+          <Route path="/submissions" element={<SubmissionPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/account" element={<AccountPage />} />
