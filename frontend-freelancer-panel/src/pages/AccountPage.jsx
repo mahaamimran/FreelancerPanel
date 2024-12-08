@@ -3,13 +3,16 @@ import { fetchUserProfile } from "../services/userService";
 import { fetchAppliedJobs } from "../services/proposalService";
 import { Button } from "../components/ui/Button";
 import { motion } from "framer-motion";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 export default function AccountPage() {
   const [profile, setProfile] = useState(null);
   const [inProgressJobs, setInProgressJobs] = useState([]);
   const [completedJobs, setCompletedJobs] = useState([]);
   const [error, setError] = useState("");
-  const token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).token : null;
+  const token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")).token
+    : null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,8 +24,12 @@ export default function AccountPage() {
         const profileData = await fetchUserProfile(token);
         const appliedJobsData = await fetchAppliedJobs(token);
 
-        const open = appliedJobsData.filter((job) => job.status === "In Progress");
-        const completed = appliedJobsData.filter((job) => job.status === "Completed");
+        const open = appliedJobsData.filter(
+          (job) => job.status === "In Progress"
+        );
+        const completed = appliedJobsData.filter(
+          (job) => job.status === "Completed"
+        );
 
         setProfile(profileData);
         setInProgressJobs(open);
@@ -35,6 +42,20 @@ export default function AccountPage() {
 
     fetchData();
   }, [token]);
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        i <= rating ? (
+          <FaStar key={i} className="text-yellow-500" />
+        ) : (
+          <FaRegStar key={i} className="text-gray-300" />
+        )
+      );
+    }
+    return stars;
+  };
 
   if (error) {
     return (
@@ -71,7 +92,8 @@ export default function AccountPage() {
             YOUR <span className="text-primary">ACCOUNT</span>
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Manage your profile and track your job applications below.
+            Manage your profile, track job applications, and check your reviews
+            below.
           </p>
         </div>
       </motion.div>
@@ -117,7 +139,9 @@ export default function AccountPage() {
           {/* Stats */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div className="p-4 bg-gray-100 rounded shadow-lg">
-              <h3 className="text-2xl font-bold text-primary">{profile.totalEarnings ?? 0}</h3>
+              <h3 className="text-2xl font-bold text-primary">
+                {profile.totalEarnings ?? 0}
+              </h3>
               <p className="text-dark text-sm">Total Earnings</p>
             </div>
             <div className="p-4 bg-gray-100 rounded shadow-lg">
@@ -135,26 +159,25 @@ export default function AccountPage() {
           />
         </motion.div>
 
-        {/* Jobs Section */}
+        {/* Jobs and Reviews Section */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="lg:col-span-2"
         >
+          {/* In Progress Jobs */}
           <div className="bg-white p-8 rounded-lg shadow-lg mb-8">
             <h2 className="text-xl font-bold text-secondary mb-4">In Progress Jobs</h2>
             {inProgressJobs.length > 0 ? (
               <ul className="space-y-4">
                 {inProgressJobs.map((job) => (
-                  <li key={job.jobId} className="p-4 bg-gray-50 rounded-lg shadow-md">
+                  <li
+                    key={job.jobId}
+                    className="p-4 bg-gray-50 rounded-lg shadow-md"
+                  >
                     <h4 className="text-lg font-bold">{job.title}</h4>
                     <p className="text-sm text-gray-600">{job.description}</p>
-                    <Button
-                      content="View Proposal"
-                      className="bg-primary text-white px-4 py-2 rounded-lg mt-4"
-                      onClick={() => window.location.replace(`/jobs/${job.jobId}/update-proposal`)}
-                    />
                   </li>
                 ))}
               </ul>
@@ -163,6 +186,34 @@ export default function AccountPage() {
             )}
           </div>
 
+          {/* Reviews */}
+          <div className="bg-white p-8 rounded-lg shadow-lg mb-8">
+            <h2 className="text-xl font-bold text-secondary mb-4">Your Reviews</h2>
+            {profile.reviews?.length > 0 ? (
+              <ul className="space-y-4">
+                {profile.reviews.map((review) => (
+                  <li
+                    key={review._id}
+                    className="p-4 bg-gray-50 rounded-lg shadow-md"
+                  >
+                    <h4 className="text-lg font-bold text-secondary mb-2">
+                      {review.title}
+                    </h4>
+                    <p className="text-gray-700 text-sm mb-2">
+                      {review.reviewText}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {renderStars(review.rating)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400">No reviews yet.</p>
+            )}
+          </div>
+
+          {/* Completed Jobs */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h2 className="text-xl font-bold text-secondary mb-4">Completed Jobs</h2>
             {completedJobs.length > 0 ? (

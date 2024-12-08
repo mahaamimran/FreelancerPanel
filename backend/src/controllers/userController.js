@@ -32,11 +32,16 @@ const deleteUser = async (req, res, next) => {
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private (Admin-only route, optional)
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private (Admin-only route, optional)
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({})
       .select("-password") // Exclude passwords for security
-      .populate("skills", "name"); // Populate skill names only
+      .populate("skills", "name") // Populate skill names only
+      .populate("reviews", "rating title reviewText"); // Updated fields to match Review schema
+
     res.status(200).json({
       success: true,
       data: users,
@@ -45,6 +50,7 @@ const getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // @desc    Register a new user
 // @route   POST /api/users/register
@@ -136,7 +142,7 @@ const getUserProfile = async (req, res, next) => {
     const user = await User.findById(req.user.id)
       .select("-password")
       .populate("skills", "name") // Populate skill names only
-      .populate("reviews", "rating comment");
+      .populate("reviews", "rating title reviewText"); // Updated fields to match Review schema
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });

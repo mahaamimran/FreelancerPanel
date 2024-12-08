@@ -39,14 +39,14 @@ export default function AboutUsPage() {
                         developed as part of our final project for the Web Engineering
                         course, bringing together the talents of three classmates from SE-F.
                     </p>
-                    <div className="flex flex-wrap gap-6 mt-6">
+                    <div className="flex flex-wrap gap-6 mt-6 justify-evenly">
                         {/* Developer 1 */}
                         <div className="flex items-center gap-4">
                             <FaCode className="text-primary text-3xl" />
                             <div>
                                 <h3 className="text-lg font-bold text-secondary">Maham Imran</h3>
                                 <p className="text-sm text-gray-600">
-                                    Lead Developer of the Freelancer Panel
+                                    Developer of the Freelancer Panel
                                 </p>
                             </div>
                         </div>
@@ -55,7 +55,7 @@ export default function AboutUsPage() {
                         <div className="flex items-center gap-4">
                             <FaLightbulb className="text-primary text-3xl" />
                             <div>
-                                <h3 className="text-lg font-bold text-secondary">Hashir Amaze</h3>
+                                <h3 className="text-lg font-bold text-secondary">Hashir Ayaz</h3>
                                 <p className="text-sm text-gray-600">
                                     Developer of the Job Provider Panel
                                 </p>
