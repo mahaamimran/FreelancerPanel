@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 
 export default function AccountPage() {
   const [profile, setProfile] = useState(null);
-  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [inProgressJobs, setInProgressJobs] = useState([]);
+  const [completedJobs, setCompletedJobs] = useState([]);
   const [error, setError] = useState("");
   const token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).token : null;
 
@@ -20,8 +21,12 @@ export default function AccountPage() {
         const profileData = await fetchUserProfile(token);
         const appliedJobsData = await fetchAppliedJobs(token);
 
+        const open = appliedJobsData.filter((job) => job.status === "In Progress");
+        const completed = appliedJobsData.filter((job) => job.status === "Completed");
+
         setProfile(profileData);
-        setAppliedJobs(appliedJobsData);
+        setInProgressJobs(open);
+        setCompletedJobs(completed);
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.message || "Failed to fetch profile or applied jobs.");
@@ -46,7 +51,6 @@ export default function AccountPage() {
 
   if (!profile) {
     return (
-      // Centered loading spinner
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
       </div>
@@ -55,7 +59,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Animated Header Section */}
+      {/* Banner Section */}
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,53 +70,21 @@ export default function AccountPage() {
           <h1 className="text-6xl font-bold text-secondary mt-16">
             YOUR <span className="text-primary">ACCOUNT</span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600">Manage your account and profile settings below.</p>
+          <p className="mt-4 text-lg text-gray-600">
+            Manage your profile and track your job applications below.
+          </p>
         </div>
       </motion.div>
 
-      {/* Main Content */}
-      <motion.div
-        className="container mx-auto mt-12 px-4 lg:px-0 grid grid-cols-1 lg:grid-cols-2 gap-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className="container mx-auto px-4 lg:px-0 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Section */}
-        <div className="bg-gray-50 shadow-lg rounded-lg p-8 w-full">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="lg:col-span-1 bg-gray-50 p-8 rounded-lg shadow-lg"
+        >
           <h2 className="text-xl font-bold text-secondary mb-4">Profile</h2>
-          <h3 className="text-lg font-semibold text-secondary mb-2">Applied Jobs</h3>
-          {appliedJobs.length > 0 ? (
-            <ul className="space-y-4">
-              {appliedJobs.map((job) => (
-                <li
-                  key={job.jobId}
-                  className="p-4 bg-white shadow-md rounded-lg"
-                >
-                  <h4 className="text-lg font-bold">{job.title}</h4>
-                  <p className="text-sm text-gray-600">{job.description}</p>
-                  <div className="mt-4 flex justify-end gap-4">
-                    <Button
-                      content="Update"
-                      className="bg-primary text-white px-4 py-2 rounded-lg"
-                      onClick={() => window.location.replace(`/jobs/${job.jobId}/update-proposal`)}
-                    />
-                    <Button
-                      content="Delete"
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                      onClick={() => console.log("Delete proposal logic here")}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400 text-center">You haven't applied to any jobs yet.</p>
-          )}
-        </div>
-
-        {/* Account Section */}
-        <div className="bg-gray-50 shadow-lg rounded-lg p-8 w-full">
-          <h2 className="text-xl font-bold text-secondary mb-4">Account</h2>
           <div className="flex flex-col items-center mb-8">
             <h1 className="text-3xl font-bold text-secondary">
               {profile.firstName} {profile.lastName}
@@ -157,12 +129,57 @@ export default function AccountPage() {
           </div>
 
           <Button
-            content="Edit Account"
+            content="Edit Profile"
             className="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-all duration-300"
             onClick={() => window.location.replace("/edit-profile")}
           />
-        </div>
-      </motion.div>
+        </motion.div>
+
+        {/* Jobs Section */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="lg:col-span-2"
+        >
+          <div className="bg-white p-8 rounded-lg shadow-lg mb-8">
+            <h2 className="text-xl font-bold text-secondary mb-4">In Progress Jobs</h2>
+            {inProgressJobs.length > 0 ? (
+              <ul className="space-y-4">
+                {inProgressJobs.map((job) => (
+                  <li key={job.jobId} className="p-4 bg-gray-50 rounded-lg shadow-md">
+                    <h4 className="text-lg font-bold">{job.title}</h4>
+                    <p className="text-sm text-gray-600">{job.description}</p>
+                    <Button
+                      content="View Proposal"
+                      className="bg-primary text-white px-4 py-2 rounded-lg mt-4"
+                      onClick={() => window.location.replace(`/jobs/${job.jobId}/update-proposal`)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400">No jobs in progress yet.</p>
+            )}
+          </div>
+
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold text-secondary mb-4">Completed Jobs</h2>
+            {completedJobs.length > 0 ? (
+              <ul className="space-y-4">
+                {completedJobs.map((job) => (
+                  <li key={job.jobId} className="p-4 bg-gray-50 rounded-lg shadow-md">
+                    <h4 className="text-lg font-bold">{job.title}</h4>
+                    <p className="text-sm text-gray-600">{job.description}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400">No completed jobs yet.</p>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

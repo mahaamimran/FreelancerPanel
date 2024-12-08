@@ -206,14 +206,17 @@ const getProposalForJobByUser = async (req, res, next) => {
 const getJobsAppliedTo = async (req, res, next) => {
   try {
     const proposals = await Proposal.find({ freelancerId: req.user._id }).populate("jobId");
+
     const jobs = proposals.map((proposal) => ({
       jobId: proposal.jobId._id,
       title: proposal.jobId.title,
       description: proposal.jobId.description,
+      status: proposal.jobId.status, 
       budgetType: proposal.jobId.budgetType,
       budgetAmount: proposal.jobId.budgetAmount,
       proposalId: proposal._id,
     }));
+
     res.status(200).json(jobs);
   } catch (error) {
     console.error("Error fetching applied jobs:", error);
