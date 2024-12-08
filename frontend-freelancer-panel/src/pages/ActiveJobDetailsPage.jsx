@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Added useNavigate
 import { fetchJobById } from "../services/jobService";
 import { fetchSkills } from "../services/skillService";
 import { Spinner } from "../components/ui/Spinner";
@@ -10,6 +10,7 @@ import { FaMoneyBillWave, FaClock, FaMapMarkerAlt, FaTools, FaUser } from "react
 
 const ActiveJobDetailsPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate(); // Initialize navigate
     const [job, setJob] = useState(null);
     const [skills, setSkills] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +52,7 @@ const ActiveJobDetailsPage = () => {
     };
 
     const handleSubmitWork = () => {
-        alert("Work submitted successfully!");
+        navigate(`/active-jobs/${id}/submit-work`);
     };
 
     return (
@@ -110,7 +111,7 @@ const ActiveJobDetailsPage = () => {
                         <div className="mt-8">
                             <Button
                                 content="Submit Work"
-                                onClick={handleSubmitWork}
+                                onClick={handleSubmitWork} 
                                 className="w-full"
                             />
                         </div>

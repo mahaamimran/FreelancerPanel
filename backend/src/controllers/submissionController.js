@@ -47,7 +47,8 @@ const getSubmissionsByJob = async (req, res, next) => {
   try {
     const submissions = await Submission.find({ jobId })
       .populate("freelancerId", "firstName lastName email")
-      .populate("jobProviderId", "firstName lastName email");
+      .populate("jobProviderId", "firstName lastName email")
+      .select("title text status attachments createdAt updatedAt"); 
 
     if (!submissions.length) {
       const error = new Error("No submissions found for this job");
@@ -61,12 +62,13 @@ const getSubmissionsByJob = async (req, res, next) => {
   }
 };
 
+
 // @desc Update a submission
 // @route PUT /api/submissions/:id
 // @access Freelancer
 const updateSubmission = async (req, res, next) => {
   const { id } = req.params;
-  const { title, text, attachments } = req.body;
+  const { title, text, attachments, status } = req.body; // Include status
 
   try {
     const submission = await Submission.findById(id);
@@ -92,9 +94,16 @@ const updateSubmission = async (req, res, next) => {
       return next(error);
     }
 
+    // Update allowed fields
     submission.title = title || submission.title;
     submission.text = text || submission.text;
     submission.attachments = attachments || submission.attachments;
+
+    // Allow admin or job provider to update the status
+    if (status && ["Pending", "Complete"].includes(status)) {
+      submission.status = status;
+    }
+
     submission.updatedAt = Date.now();
 
     await submission.save();
@@ -104,6 +113,7 @@ const updateSubmission = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // @desc Delete a submission
 // @route DELETE /api/submissions/:id

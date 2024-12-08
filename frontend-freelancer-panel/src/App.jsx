@@ -12,6 +12,7 @@ import SubmitProposalPage from "./pages/SubmitProposalPage";
 import UpdateProposalPage from "./pages/UpdateProposalPage";
 import ActiveJobsPage from "./pages/ActiveJobsPage";
 import ActiveJobDetailsPage from "./pages/ActiveJobDetailsPage";
+import SubmissionPage from "./pages/SubmissionPage"; 
 import "./App.css";
 
 function App() {
@@ -24,11 +25,13 @@ function App() {
           <Route path="/jobs" element={<JobList />} />
           <Route path="/active-jobs" element={<ActiveJobsPage />} />
           <Route path="/active-jobs/:id" element={<ActiveJobDetailsPage />} />
+          <Route path="/active-jobs/:id/submit-work" element={<SubmissionPage />} />
+          <Route path="/submissions" element={<SubmissionPage />} /> 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/jobs/:id" element={<JobDetails />} /> 
+          <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/jobs/:id/submit-proposal" element={<SubmitProposalPage />} />
           <Route path="/jobs/:jobId/update-proposal" element={<UpdateProposalPage />} />
           <Route

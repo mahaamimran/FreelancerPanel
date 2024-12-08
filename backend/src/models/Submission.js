@@ -3,28 +3,28 @@ const mongoose = require("mongoose");
 const submissionSchema = new mongoose.Schema({
   jobId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Job", 
+    ref: "Job",
     required: true,
   },
   freelancerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", 
+    ref: "User",
     required: true,
   },
   jobProviderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", 
+    ref: "User",
     required: true,
   },
   title: {
     type: String,
     required: true,
-    maxlength: 100, 
+    maxlength: 100,
   },
   text: {
     type: String,
     required: true,
-    minlength: 10, 
+    minlength: 10,
   },
   attachments: {
     type: [
@@ -33,15 +33,20 @@ const submissionSchema = new mongoose.Schema({
         fileUrl: { type: String, required: true },
       },
     ],
-    default: [], 
+    default: [],
+  },
+  status: {
+    type: String,
+    enum: ["Pending", "Complete"], // Restricts values to "Pending" or "Complete"
+    default: "Pending", // Default status is "Pending"
   },
   createdAt: {
     type: Date,
-    default: Date.now, 
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now, 
+    default: Date.now,
   },
 });
 
