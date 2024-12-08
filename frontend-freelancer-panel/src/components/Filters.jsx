@@ -7,15 +7,15 @@ const Filters = ({ onFilterChange }) => {
     experienceLevel: "",
     category: "",
   });
-
   const [categories, setCategories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const skillsPerPage = 10; // Number of skills to display per page
 
-  // Fetch categories from the backend
   useEffect(() => {
     const getCategories = async () => {
       try {
         const skills = await fetchSkills();
-        setCategories(skills); // Assuming API response is an array of skills
+        setCategories(skills);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -41,6 +41,18 @@ const Filters = ({ onFilterChange }) => {
     onFilterChange(clearedFilters);
   };
 
+  // Paginate Skills
+  const startIndex = (currentPage - 1) * skillsPerPage;
+  const paginatedSkills = categories.slice(startIndex, startIndex + skillsPerPage);
+
+  const handlePageChange = (direction) => {
+    if (direction === "next" && startIndex + skillsPerPage < categories.length) {
+      setCurrentPage((prev) => prev + 1);
+    } else if (direction === "prev" && currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <div className="bg-gray-50 p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold text-dark">Filters</h2>
@@ -48,72 +60,43 @@ const Filters = ({ onFilterChange }) => {
         {/* Budget Type Filter */}
         <h3 className="text-sm font-medium text-gray-600">Budget Type</h3>
         <div className="space-y-2">
-          <label className="block">
-            <input
-              type="radio"
-              name="budgetType"
-              value="Fixed"
-              checked={selectedFilters.budgetType === "Fixed"}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Fixed
-          </label>
-          <label className="block">
-            <input
-              type="radio"
-              name="budgetType"
-              value="Hourly"
-              checked={selectedFilters.budgetType === "Hourly"}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Hourly
-          </label>
+          {["Fixed", "Hourly"].map((type) => (
+            <label className="block" key={type}>
+              <input
+                type="radio"
+                name="budgetType"
+                value={type}
+                checked={selectedFilters.budgetType === type}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              {type}
+            </label>
+          ))}
         </div>
 
         {/* Experience Level Filter */}
         <h3 className="text-sm font-medium text-gray-600">Experience Level</h3>
         <div className="space-y-2">
-          <label className="block">
-            <input
-              type="radio"
-              name="experienceLevel"
-              value="Entry"
-              checked={selectedFilters.experienceLevel === "Entry"}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Entry
-          </label>
-          <label className="block">
-            <input
-              type="radio"
-              name="experienceLevel"
-              value="Intermediate"
-              checked={selectedFilters.experienceLevel === "Intermediate"}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Intermediate
-          </label>
-          <label className="block">
-            <input
-              type="radio"
-              name="experienceLevel"
-              value="Expert"
-              checked={selectedFilters.experienceLevel === "Expert"}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Expert
-          </label>
+          {["Entry", "Intermediate", "Expert"].map((level) => (
+            <label className="block" key={level}>
+              <input
+                type="radio"
+                name="experienceLevel"
+                value={level}
+                checked={selectedFilters.experienceLevel === level}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              {level}
+            </label>
+          ))}
         </div>
 
-        {/* Category Filter */}
+        {/* Category (Paginated Skills) */}
         <h3 className="text-sm font-medium text-gray-600">Category</h3>
         <div className="space-y-2">
-          {categories.map((category) => (
+          {paginatedSkills.map((category) => (
             <label className="block" key={category._id}>
               <input
                 type="radio"
@@ -127,9 +110,30 @@ const Filters = ({ onFilterChange }) => {
             </label>
           ))}
         </div>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={() => handlePageChange("prev")}
+            disabled={currentPage === 1}
+            className={`text-sm px-4 py-2 rounded-lg ${
+              currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "text-primary hover:underline"
+            }`}
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => handlePageChange("next")}
+            disabled={startIndex + skillsPerPage >= categories.length}
+            className={`text-sm px-4 py-2 rounded-lg ${
+              startIndex + skillsPerPage >= categories.length
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-primary hover:underline"
+            }`}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
-      {/* Minimal Clear Filters Button */}
       <div className="mt-6 text-right">
         <button
           onClick={handleClearFilters}
