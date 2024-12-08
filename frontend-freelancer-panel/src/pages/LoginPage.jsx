@@ -19,6 +19,7 @@ export default function LoginPage() {
     // window.open(`${import.meta.env.VITE_API_URL}/v1/auth/google`, "_self");
     window.open("http://localhost:3000/api/v1/auth/google", "_self");
   };
+  
   const validateForm = () => {
     const newErrors = {};
     if (!email.includes("@")) newErrors.email = "Invalid email format.";

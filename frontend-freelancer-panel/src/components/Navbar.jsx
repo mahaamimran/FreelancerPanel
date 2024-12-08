@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import AuthContext from "../context/AuthContext";
 import Modal from "../components/ui/Modal";
@@ -8,10 +8,12 @@ export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogoutConfirm = () => {
     logout();
     setIsModalOpen(false);
+    navigate("/"); // Redirect to the landing page
   };
 
   return (
@@ -31,9 +33,9 @@ export default function Navbar() {
               Find Work
             </Link>
             {user && (
-            <Link to="/active-jobs" className="hover:text-primary">
-              Active Jobs
-            </Link>
+              <Link to="/active-jobs" className="hover:text-primary">
+                Active Jobs
+              </Link>
             )}
             <Link to="/about" className="hover:text-primary">
               About Us
@@ -111,15 +113,17 @@ export default function Navbar() {
                     Find Work
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/active-jobs"
-                    className="block text-sm font-medium text-black hover:text-primary"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Active Jobs
-                  </Link>
-                </li>
+                {user && (
+                  <li>
+                    <Link
+                      to="/active-jobs"
+                      className="block text-sm font-medium text-black hover:text-primary"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Active Jobs
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link
                     to="/about"

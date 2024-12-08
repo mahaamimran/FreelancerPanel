@@ -3,11 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/Input";
 import { registerUser } from "@/services/userService";
 import AuthContext from "@/context/AuthContext";
-import googleLogo from "../assets/google-logo.svg";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 import logo from "../assets/logo-without-text.png";
 import DynamicText from "@/components/DynamicText";
 
+
 export default function SignUpPage() {
+  
+  const handleGoogleLogin = () => {
+    // window.open(`${import.meta.env.VITE_API_URL}/v1/auth/google`, "_self");
+    window.open("http://localhost:3000/api/v1/auth/google", "_self");
+  };
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -149,17 +156,8 @@ export default function SignUpPage() {
             Sign Up
           </button>
           {/* Sign Up with Google Button */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-center px-4 py-3 bg-white text-dark border border-gray-300 rounded-xl text-lg font-semibold hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 transition"
-          >
-            <img
-              src={googleLogo}
-              alt="Google"
-              className="h-5 w-5 mr-2"
-            />
-            Sign Up with Google
-          </button>
+         {/* Login with Google Button */}
+         <GoogleLoginButton onClick={handleGoogleLogin} />
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{" "}

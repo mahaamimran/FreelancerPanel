@@ -1,12 +1,10 @@
 import React from "react";
-import { Button } from "./ui/Button";
 
 const GoogleLoginButton = ({ onClick }) => {
   return (
-    <Button
-      variant="outline"
-      className="w-full flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-all duration-200"
+    <button
       onClick={onClick}
+      className="w-full flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition-all duration-200 shadow-md"
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">
         <path
@@ -26,8 +24,8 @@ const GoogleLoginButton = ({ onClick }) => {
           fill="#EA4335"
         />
       </svg>
-      Continue with Google
-    </Button>
+      <span className="text-lg font-bold">Continue with Google</span>
+    </button>
   );
 };
 
